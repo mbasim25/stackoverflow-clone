@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+  web:
+    depends_on:
+      - db
+    environment:
+      - SECRET_KEY=RLg@h&AmojaXmJ7?XTmis?BEKCix4XRjhe8#eoN6PLS3Jf9S
+      - DATABASE_URL="postgresql://postgres:shh_secret_pass_forTeSting@localhost:5432/postgres"
+      - PORT=3000
+      - NODE_ENV="development"
+
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=shh_secret_pass_forTeSting
