@@ -10,6 +10,11 @@ const prisma = new PrismaClient();
 class Controller {
   list = async (req: Request, res: Response) => {
     try {
+      const data: User = await validators.superAdmin.validateAsync(req.user);
+      console.log(data);
+      if (!((await data.isSuperAdmin) == true)) {
+        res.send(401).send();
+      }
       const user = await prisma.user.findMany({});
       res.status(200).send(user);
     } catch (e) {
@@ -19,15 +24,11 @@ class Controller {
 
   create = async (req: Request, res: Response) => {
     try {
-      const data: User = await validators.createUser.validateAsync(req.body);
+      const data: User = await validators.superAdmin.validateAsync(req.body);
       data.password = await bcrypt.hash(data.password, 12);
       const user = await prisma.user.create({
         data: {
-          username: data.username,
-          firstName: data.firstName,
-          lastName: data.lastName,
-          image: data.image,
-          password: data.password,
+          ...data,
         },
       });
       res.status(201).send(user);

@@ -22,6 +22,19 @@ export const updateUser = joi.object<User>({
   score: Joi.string(),
 });
 
+export const superAdmin = joi.object<User>({
+  id: Joi.string(),
+  username: Joi.string().min(2).max(32).required(),
+  firstName: Joi.string().allow(null),
+  lastName: Joi.string().allow(null),
+  image: Joi.string().allow(null),
+  password: Joi.string().min(6).required(),
+  isActive: Joi.boolean(),
+  isAdmin: Joi.boolean(),
+  isSuperAdmin: Joi.boolean(),
+  score: Joi.number(),
+});
+
 export const register = joi.object<Account>({
   username: Joi.string().min(2).max(32).required(),
   firstName: Joi.string().min(2).max(32),
