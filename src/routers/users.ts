@@ -7,7 +7,7 @@ const router = Router();
 // LCUD or CRUD
 router.get("", controller.list);
 router.post("/", controller.create);
-// router.patch("/:id", controller.update);
-// router.delete("/:id", controller.destroy);
+router.patch("/:id", controller.update);
+router.delete("/:id", controller.destroy);
 
 export default router;

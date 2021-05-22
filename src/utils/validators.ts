@@ -9,3 +9,15 @@ export const createUser = joi.object<User>({
   image: Joi.string().min(2),
   password: Joi.string().min(6).max(32).required(),
 });
+
+export const updateUser = joi.object<User>({
+  username: Joi.string().min(2).max(32).required(),
+  firstName: Joi.string().min(2).max(32),
+  lastName: Joi.string().min(2).max(32),
+  image: Joi.string().min(2),
+  password: Joi.string().min(6).max(32).required(),
+  isActive: Joi.boolean(),
+  isAdmin: Joi.boolean(),
+  isSuperAdmin: Joi.boolean(),
+  score: Joi.string(),
+});
