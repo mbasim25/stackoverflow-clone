@@ -12,13 +12,14 @@ class Controller {
     try {
       const data: Account = await validators.register.validateAsync(req.body);
       data.password = await bcrypt.hash(data.password, 12);
-      const account = await prisma.account.create({
-        data: {},
+      const account = await prisma.user.create({
+        data: { username: data.username, password: data.password },
       });
 
-      return res.status(201).json();
-    } catch (error) {
-      return res.status(400).json(error);
+      return res.status(201).send(account);
+    } catch (e) {
+      console.log(e);
+      return res.status(400).json(e);
     }
   };
 }

@@ -6,7 +6,7 @@ const router = Router();
 
 // LCUD or CRUD
 // router.get("", controller.list);
-// router.post("/", controller.create);
+router.post("/register", controller.registration);
 // router.patch("/:id", controller.update);
 // router.delete("/:id", controller.destroy);
 
