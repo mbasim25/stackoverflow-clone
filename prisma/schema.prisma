@@ -12,7 +12,7 @@ model User {
   username        String @unique
   firstName       String?
   lastName        String?
-  image           String
+  image           String?
   password        String 
   score           Int     @default(0)
   isActive        Boolean @default(true)
