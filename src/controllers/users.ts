@@ -35,6 +35,28 @@ class Controller {
       res.status(500).send(e);
     }
   };
+
+  update = async (req: Request, res: Response) => {
+    try {
+      const data: User = await validators.updateUser.validateAsync(req.body);
+    } catch (e) {
+      res.status(400);
+    }
+  };
+
+  destroy = async (req: Request, res: Response) => {
+    try {
+      const id = req.params.id;
+      await prisma.user.delete({
+        where: {
+          id: id,
+        },
+      });
+      res.status(200).send("user deleted");
+    } catch (e) {
+      res.status(500).send();
+    }
+  };
 }
 
 export default new Controller();
