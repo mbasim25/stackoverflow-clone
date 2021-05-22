@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@prisma/client": "^2.23.0",
+    "bcrypt": "^5.0.1",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.5",
     "dotenv": "^9.0.2",
@@ -19,6 +20,7 @@
     "passport-jwt": "^4.0.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/compression": "^1.7.0",
     "@types/cookie-parser": "^1.4.2",
     "@types/errorhandler": "^1.5.0",

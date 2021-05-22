@@ -8,7 +8,17 @@ generator client {
 }
 
 model User {
-  id    String  @id @default(cuid())
-  email String  @unique
-  name  String?
+  id              String  @id @default(cuid())
+  username        String @unique
+  firstName       String?
+  lastName        String?
+  image           String
+  password        String 
+  score           Int     @default(0)
+  isActive        Boolean @default(true)
+  isAdmin         Boolean @default(false)
+  isSuperAdmin    Boolean @default(false)
+  //Question[]
+  //Answer[]
+  //Comment[]
 }

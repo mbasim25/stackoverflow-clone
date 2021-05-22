@@ -1,0 +1,11 @@
+import Joi from "joi";
+import joi from "joi";
+import { User } from "../types/users";
+
+export const createUser = joi.object<User>({
+  username: Joi.string().min(2).max(32).required(),
+  firstName: Joi.string().min(2).max(32),
+  lastName: Joi.string().min(2).max(32),
+  image: Joi.string().min(2),
+  password: Joi.string().min(6).max(32).required(),
+});
