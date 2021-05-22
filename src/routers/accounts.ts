@@ -5,7 +5,7 @@ import controller from "../controllers/accounts";
 const router = Router();
 
 // LCUD or CRUD
-// router.get("", controller.list);
+router.post("/login", controller.login);
 router.post("/register", controller.registration);
 // router.patch("/:id", controller.update);
 // router.delete("/:id", controller.destroy);
