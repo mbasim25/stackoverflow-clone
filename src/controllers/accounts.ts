@@ -4,7 +4,8 @@ import bcrypt from "bcrypt";
 import * as validators from "../utils/validators";
 import { Account } from "../types/accounts";
 
-import { prisma } from "../server";
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
 import jwt from "jsonwebtoken";
 import { secrets } from "../utils";
 
