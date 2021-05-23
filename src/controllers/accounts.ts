@@ -6,6 +6,7 @@ import { Account } from "../types/accounts";
 
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+
 import jwt from "jsonwebtoken";
 import { secrets } from "../utils";
 
