@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import * as validators from "../utils";
-import { Question, User, Account } from "../types/";
+import { Question, User } from "../types/";
 
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
