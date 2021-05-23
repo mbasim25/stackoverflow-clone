@@ -5,8 +5,9 @@ import {
   VerifyCallback,
 } from "passport-jwt";
 import { SECRET_KEY } from "../secrets";
-
-import { prisma } from "../../server";
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
+import { User } from "../../types";
 
 const options: StrategyOptions = {
   secretOrKey: SECRET_KEY,
@@ -16,13 +17,12 @@ const options: StrategyOptions = {
 const verify: VerifyCallback = async (payload, done) => {
   try {
     const id = payload.id;
-    const user = await prisma.user.findUnique({
+    const user: User = await prisma.user.findUnique({
       where: {
         id: id,
       },
     });
     done(null, user);
-    console.log(user);
   } catch (e) {
     done(e, null);
   }

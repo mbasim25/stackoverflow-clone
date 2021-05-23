@@ -43,6 +43,7 @@ export const register = joi.object<Account>({
 });
 
 export const login = joi.object<Account>({
+  id: Joi.string(),
   username: Joi.string().min(2).max(32).required(),
   firstName: Joi.string().allow(null),
   lastName: Joi.string().allow(null),

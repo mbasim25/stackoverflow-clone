@@ -41,6 +41,7 @@ app.use("/", routers.core);
 app.use("/examples", routers.examples);
 app.use("/users", routers.users);
 app.use("/accounts", routers.accounts);
+app.use("/questions", routers.questions);
 
 // Error handler
 if (secrets.NODE_ENV === "development") {
