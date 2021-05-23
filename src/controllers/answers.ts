@@ -16,33 +16,75 @@ class Controller {
   };
 
   create = async (req: Request, res: Response) => {
-    // Validate data coming from the request body
+    try {
+      const data: Answer = await validators.av.createAnswer.validateAsync(
+        req.body
+      );
+      const user: User = req.user;
+      const answer = await prisma.answer.create({
+        data: { body: data.body, userId: user.id, questionId: data.questionId },
+      });
 
-    // Add them to the database
-
-    // Return them
-
-    return res.status(201).json({ id: "id", content: "content" });
+      res.status(201).send(answer);
+    } catch (e) {
+      res.status(400).send(e);
+    }
   };
 
   update = async (req: Request, res: Response) => {
-    // Get the example from db by id (PATH parameter)
-
-    // Update the example
-
-    // Return the example
-
-    return res.status(200).json({ id: "id", content: "content" });
+    try {
+      const user: User = req.user;
+      const id = req.params.id;
+      const answer = await prisma.answer.findUnique({
+        where: {
+          id: id,
+        },
+      });
+      if (!answer) {
+        return res.status(404).send("answer not found");
+      } else if (answer.userId !== user.id) {
+        return res.status(403).send("unauthorized access");
+      }
+      const data: Answer = await validators.av.updateAnswer.validateAsync(
+        req.body
+      );
+      const updated = await prisma.answer.update({
+        where: {
+          id: answer.id,
+        },
+        data: {
+          body: data.body,
+        },
+      });
+      res.status(200).send(updated);
+    } catch (e) {
+      res.status(400).send();
+    }
   };
 
   destroy = async (req: Request, res: Response) => {
-    // Get the example from db by id (PATH parameter)
-
-    // Delete the example
-
-    // Return empty response
-
-    return res.status(204).json();
+    try {
+      const user: User = req.user;
+      const id = req.params.id;
+      const answer = await prisma.answer.findUnique({
+        where: {
+          id: id,
+        },
+      });
+      if (!answer) {
+        return res.status(404).send("answer not found");
+      } else if (answer.userId !== user.id) {
+        return res.status(403).send("unauthorized access");
+      }
+      await prisma.answer.delete({
+        where: {
+          id: answer.id,
+        },
+      });
+      res.status(200).send("answer deleted succesfully");
+    } catch (e) {
+      res.status(400).send();
+    }
   };
 }
 

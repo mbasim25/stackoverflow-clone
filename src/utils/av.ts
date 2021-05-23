@@ -11,5 +11,4 @@ export const createAnswer = joi.object<Answer>({
 export const updateAnswer = joi.object<Answer>({
   body: Joi.string().required(),
   userId: Joi.string(),
-  questionId: Joi.string(),
 });
