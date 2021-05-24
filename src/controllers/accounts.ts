@@ -11,6 +11,9 @@ import { secrets } from "../utils";
 
 import { User, PChange } from "../types";
 
+import multer from "multer";
+const upload = multer({ dest: "uploads/" });
+
 class Controller {
   registration = async (req: Request, res: Response) => {
     try {
