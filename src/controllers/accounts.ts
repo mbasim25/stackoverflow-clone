@@ -41,7 +41,7 @@ class Controller {
       const token = jwt.sign({ id: account.id }, secrets.SECRET_KEY, {
         expiresIn: "24h",
       });
-      res.status(200).send({ token });
+      return res.status(200).send({ token });
     } catch (e) {
       return res.status(400).send(e);
     }
