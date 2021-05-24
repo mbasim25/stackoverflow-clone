@@ -1,6 +1,6 @@
 export interface Question {
   id?: string;
-  body: String;
+  body: string;
   votes?: number;
-  userId?: String;
+  userId?: string;
 }

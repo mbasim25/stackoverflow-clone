@@ -2,8 +2,7 @@ import { Request, Response } from "express";
 import * as validators from "../utils";
 import { Answer, Question, User } from "../types/";
 
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+import { prisma } from "../server";
 
 class Controller {
   list = async (req: Request, res: Response) => {
@@ -11,7 +10,7 @@ class Controller {
       const answers = await prisma.answer.findMany({});
       res.status(200).send(answers);
     } catch (e) {
-      res.status(500).send(e);
+      res.status(400).send(e);
     }
   };
 

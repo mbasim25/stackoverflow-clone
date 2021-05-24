@@ -2,8 +2,7 @@ import { Request, Response } from "express";
 import * as validators from "../utils";
 import { Question, User } from "../types/";
 
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+import { prisma } from "../server";
 
 class Controller {
   list = async (req: Request, res: Response) => {
@@ -11,7 +10,7 @@ class Controller {
       const question = await prisma.question.findMany({});
       res.status(200).send(question);
     } catch (e) {
-      res.status(500).send(e);
+      res.status(400).send(e);
     }
   };
 
@@ -44,7 +43,7 @@ class Controller {
       });
       if (!question) {
         return res.status(404).send("question not found");
-      } else if (question.userId !== user.id) {
+      } else if (question.userId !== user.id || !user.isAdmin) {
         return res.status(403).send("unauthorized access");
       }
       const data: Question = await validators.qv.updateQuestion.validateAsync(
@@ -75,7 +74,7 @@ class Controller {
       });
       if (!question) {
         return res.status(404).send("question not found");
-      } else if (question.userId !== user.id) {
+      } else if (question.userId !== user.id || !user.isAdmin) {
         return res.status(403).send("unauthorized access");
       }
       await prisma.question.delete({

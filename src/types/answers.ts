@@ -1,7 +1,7 @@
 export interface Answer {
   id?: string;
-  body: String;
+  body: string;
   votes?: number;
-  userId?: String;
+  userId?: string;
   questionId?: string;
 }

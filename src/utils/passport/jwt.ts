@@ -5,8 +5,9 @@ import {
   VerifyCallback,
 } from "passport-jwt";
 import { SECRET_KEY } from "../secrets";
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+
+import { prisma } from "../../server";
+
 import { User } from "../../types";
 
 const options: StrategyOptions = {

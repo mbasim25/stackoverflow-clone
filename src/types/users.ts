@@ -5,8 +5,8 @@ export interface User {
   lastName?: string;
   image?: string;
   password?: string;
-  isActive?: Boolean;
-  isAdmin?: Boolean;
-  isSuperAdmin?: Boolean;
+  isActive?: boolean;
+  isAdmin?: boolean;
+  isSuperAdmin?: boolean;
   score?: number;
 }
