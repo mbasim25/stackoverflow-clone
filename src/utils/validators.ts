@@ -50,3 +50,20 @@ export const login = joi.object<Account>({
   image: Joi.string().allow(null),
   password: Joi.string().min(6).required(),
 });
+
+export const admin = joi.object<User>({
+  id: Joi.string(),
+  username: Joi.string().min(2).max(32).required(),
+  firstName: Joi.string().allow(null),
+  lastName: Joi.string().allow(null),
+  image: Joi.string().allow(null),
+  password: Joi.string().min(6).required(),
+  isActive: Joi.boolean(),
+  isAdmin: Joi.boolean(),
+  score: Joi.number(),
+});
+
+export const adminUserUpdate = joi.object<User>({
+  username: Joi.string().min(2).max(32).required(),
+  isActive: Joi.boolean(),
+});

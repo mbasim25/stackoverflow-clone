@@ -22,6 +22,7 @@ const verify: VerifyCallback = async (payload, done) => {
         id: id,
       },
     });
+    // console.log(user);
     done(null, user);
   } catch (e) {
     done(e, null);

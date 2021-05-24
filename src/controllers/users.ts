@@ -40,7 +40,7 @@ class Controller {
     try {
       const data: User = await validators.superAdmin.validateAsync(req.user);
       if (!((await data.isSuperAdmin) == true)) {
-        return res.send(401).send("unauthorized");
+        return res.status(401).send("unauthorized");
       }
       const userdata: User = await validators.updateUser.validateAsync(
         req.body
