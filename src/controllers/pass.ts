@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 
 import * as validators from "../utils/validators";
-import { User, Account, PChange } from "../types";
+import { User, PChange } from "../types";
 
 import { prisma } from "../server";
 
