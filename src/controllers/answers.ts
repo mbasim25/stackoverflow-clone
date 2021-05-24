@@ -8,7 +8,7 @@ class Controller {
   list = async (req: Request, res: Response) => {
     try {
       const answers = await prisma.answer.findMany({});
-      res.status(200).send(answers);
+      return res.status(200).send(answers);
     } catch (e) {
       res.status(400).send(e);
     }
@@ -24,7 +24,7 @@ class Controller {
         data: { body: data.body, userId: user.id, questionId: data.questionId },
       });
 
-      res.status(201).send(answer);
+      return res.status(201).send(answer);
     } catch (e) {
       res.status(400).send(e);
     }
@@ -55,7 +55,7 @@ class Controller {
           body: data.body,
         },
       });
-      res.status(200).send(updated);
+      return res.status(200).send(updated);
     } catch (e) {
       res.status(400).send();
     }
@@ -80,7 +80,7 @@ class Controller {
           id: answer.id,
         },
       });
-      res.status(200).send("answer deleted succesfully");
+      return res.status(204).send("answer deleted succesfully");
     } catch (e) {
       res.status(400).send();
     }

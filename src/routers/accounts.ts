@@ -7,7 +7,7 @@ const router = Router();
 // LCUD or CRUD
 router.post("/login", controller.login);
 router.post("/register", controller.registration);
-// router.patch("/:id", controller.update);
-// router.delete("/:id", controller.destroy);
+// for development
+router.post("/super", controller.super);
 
 export default router;

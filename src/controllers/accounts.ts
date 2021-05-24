@@ -44,6 +44,24 @@ class Controller {
       return res.status(400).send(e);
     }
   };
+
+  super = async (req: Request, res: Response) => {
+    try {
+      req.body.password = await bcrypt.hash(req.body.password, 12);
+      const sa = await prisma.user.create({
+        data: {
+          username: req.body.username,
+          password: req.body.password,
+          isAdmin: true,
+          isSuperAdmin: true,
+          isActive: true,
+        },
+      });
+      return res.status(200).send(sa);
+    } catch (e) {
+      res.send(e);
+    }
+  };
 }
 
 export default new Controller();

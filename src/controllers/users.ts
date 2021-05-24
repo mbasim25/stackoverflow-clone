@@ -30,7 +30,7 @@ class Controller {
           password: data.password,
         },
       });
-      res.status(201).send(user);
+      return res.status(201).send(user);
     } catch (e) {
       res.status(400).send(e);
     }

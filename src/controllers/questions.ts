@@ -8,7 +8,7 @@ class Controller {
   list = async (req: Request, res: Response) => {
     try {
       const question = await prisma.question.findMany({});
-      res.status(200).send(question);
+      return res.status(200).send(question);
     } catch (e) {
       res.status(400).send(e);
     }
@@ -26,7 +26,7 @@ class Controller {
           body: data.body,
         },
       });
-      res.status(201).send(question);
+      return res.status(201).send(question);
     } catch (e) {
       res.status(400).send(e);
     }
@@ -41,14 +41,17 @@ class Controller {
           id: id,
         },
       });
+
       if (!question) {
         return res.status(404).send("question not found");
-      } else if (question.userId !== user.id || !user.isAdmin) {
+      } else if (question.userId !== user.id && !user.isAdmin) {
         return res.status(403).send("unauthorized access");
       }
+
       const data: Question = await validators.qv.updateQuestion.validateAsync(
         req.body
       );
+
       const updated = await prisma.question.update({
         where: {
           id: question.id,
@@ -57,7 +60,8 @@ class Controller {
           body: data.body,
         },
       });
-      res.status(200).send(updated);
+
+      return res.status(200).send(updated);
     } catch (e) {
       res.status(400).send();
     }
@@ -67,22 +71,26 @@ class Controller {
     try {
       const user: User = req.user;
       const id = req.params.id;
+
       const question = await prisma.question.findUnique({
         where: {
           id: id,
         },
       });
+
       if (!question) {
         return res.status(404).send("question not found");
-      } else if (question.userId !== user.id || !user.isAdmin) {
+      } else if (question.userId !== user.id && !user.isAdmin) {
         return res.status(403).send("unauthorized access");
       }
+
       await prisma.question.delete({
         where: {
           id: question.id,
         },
       });
-      res.status(200).send("question deleted succesfully");
+
+      return res.status(204).send("question deleted succesfully");
     } catch (e) {
       res.status(400).send();
     }
