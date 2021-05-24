@@ -43,7 +43,6 @@ app.use("/users", routers.users);
 app.use("/accounts", routers.accounts);
 app.use("/questions", routers.questions);
 app.use("/answers", routers.answers);
-app.use("/pass", routers.pass);
 
 // Error handler
 if (secrets.NODE_ENV === "development") {

@@ -12,7 +12,6 @@ export interface User {
 }
 
 export interface PChange {
-  username?: string;
   password?: string;
   newPassword?: string;
 }

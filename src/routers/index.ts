@@ -4,7 +4,6 @@ import users from "./users";
 import accounts from "./accounts";
 import questions from "./questions";
 import answers from "./answers";
-import pass from "./pass";
 
 export default {
   core,
@@ -13,5 +12,4 @@ export default {
   accounts,
   questions,
   answers,
-  pass,
 };

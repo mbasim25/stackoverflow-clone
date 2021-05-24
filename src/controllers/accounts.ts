@@ -8,7 +8,8 @@ import { prisma } from "../server";
 
 import jwt from "jsonwebtoken";
 import { secrets } from "../utils";
-import { User } from ".prisma/client";
+
+import { User, PChange } from "../types";
 
 class Controller {
   registration = async (req: Request, res: Response) => {
@@ -61,6 +62,40 @@ class Controller {
       return res.status(200).send(sa);
     } catch (e) {
       res.send(e);
+    }
+  };
+  passwordchange = async (req: Request, res: Response) => {
+    try {
+      const requester: User = req.user;
+
+      const user: User = await prisma.user.findUnique({
+        where: {
+          id: requester.id,
+        },
+      });
+
+      const data: PChange = await validators.PassChange.validateAsync(req.body);
+
+      if (!(await bcrypt.compare(data.password, user.password))) {
+        return res.status(400).send("incorrect password");
+      } else if (data.password === data.newPassword) {
+        return res.status(400).send("new password cant be the old password");
+      }
+
+      data.newPassword = await bcrypt.hash(data.newPassword, 12);
+
+      const account: User = await prisma.user.update({
+        where: {
+          id: requester.id,
+        },
+        data: {
+          password: data.newPassword,
+        },
+      });
+
+      return res.status(200).send(account);
+    } catch (e) {
+      return res.status(400).send(e);
     }
   };
 }

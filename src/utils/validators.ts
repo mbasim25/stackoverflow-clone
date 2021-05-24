@@ -51,7 +51,6 @@ export const login = joi.object<Account>({
 });
 
 export const PassChange = joi.object<PChange>({
-  username: Joi.string(),
   password: Joi.string(),
   newPassword: Joi.string(),
 });

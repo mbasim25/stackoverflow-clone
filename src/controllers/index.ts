@@ -3,7 +3,6 @@ import examples from "./examples";
 import users from "./users";
 import accounts from "./accounts";
 import answers from "./answers";
-import pass from "./pass";
 
 export default {
   core,
@@ -11,5 +10,4 @@ export default {
   users,
   accounts,
   answers,
-  pass,
 };
