@@ -8,6 +8,7 @@ import { prisma } from "../server";
 
 import jwt from "jsonwebtoken";
 import { secrets } from "../utils";
+import { User } from ".prisma/client";
 
 class Controller {
   registration = async (req: Request, res: Response) => {

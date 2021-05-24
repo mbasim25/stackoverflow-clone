@@ -4,5 +4,5 @@ export interface Account {
   firstName?: string;
   lastName?: string;
   image?: string;
-  password: string;
+  password?: string;
 }

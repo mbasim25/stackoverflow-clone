@@ -10,3 +10,9 @@ export interface User {
   isSuperAdmin?: boolean;
   score?: number;
 }
+
+export interface PChange {
+  username?: string;
+  password?: string;
+  newPassword?: string;
+}
