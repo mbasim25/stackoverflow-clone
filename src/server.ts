@@ -11,7 +11,7 @@ const prisma = new PrismaClient();
 
 // Start listening
 server.listen(secrets.PORT, () => {
-  console.log(`💻 App listening on port ${secrets.PORT}`);
+  console.log(`💻 App listening on port http://localhost:${secrets.PORT}`);
 });
 
 export { prisma };

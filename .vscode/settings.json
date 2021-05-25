@@ -1,6 +1,9 @@
 {
   "editor.formatOnSave": true,
   "editor.tabSize": 2,
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma"
+  },
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "search.exclude": {
     "**/node_modules": true,

@@ -8,7 +8,58 @@ generator client {
 }
 
 model User {
-  id    String  @id @default(cuid())
-  email String  @unique
-  name  String?
+  id           String        @id @default(cuid())
+  username     String        @unique
+  firstName    String?
+  lastName     String?
+  image        String?
+  password     String
+  score        Int           @default(0)
+  isActive     Boolean       @default(true)
+  isAdmin      Boolean       @default(false)
+  isSuperAdmin Boolean       @default(false)
+  Question     Question[]
+  Answer       Answer[]
+  QuesComment  QuesComment[]
+  AnsComment   AnsComment[]
+}
+
+model Question {
+  id      String        @id @default(cuid())
+  body    String
+  votes   Int           @default(0)
+  userId  String
+  user    User          @relation(fields: [userId], references: [id])
+  answer  Answer[]
+  comment QuesComment[]
+
+}
+
+model QuesComment {
+  id         String   @id @default(cuid())
+  body       String
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+}
+
+model Answer {
+  id         String       @id @default(cuid())
+  body       String
+  votes      Int          @default(0)
+  userId     String
+  user       User         @relation(fields: [userId], references: [id])
+  questionId String
+  question   Question     @relation(fields: [questionId], references: [id])
+  AnsComment AnsComment[]
+}
+
+model AnsComment {
+  id       String @id @default(cuid())
+  body     String
+  answerId String
+  answer   Answer @relation(fields: [answerId], references: [id])
+  user     User   @relation(fields: [userId], references: [id])
+  userId   String
 }
