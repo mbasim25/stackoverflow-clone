@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 
 import * as validators from "../utils/validators";
-import { User, Account, PChange } from "../types";
+import { User } from "../types";
 
 import { prisma } from "../server";
 
@@ -52,13 +52,7 @@ class Controller {
           id: req.params.id,
         },
         data: {
-          username: data.username,
-          firstName: data.firstName,
-          lastName: data.lastName,
-          image: data.image,
-          isAdmin: data.isAdmin,
-          isActive: data.isActive,
-          score: data.score,
+          ...data,
         },
       });
 
