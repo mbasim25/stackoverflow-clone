@@ -1,9 +1,7 @@
 import { Request, Response } from "express";
 import * as validators from "../utils";
 import { Question, User } from "../types/";
-
 import { prisma } from "../server";
-import users from "./users";
 
 class Controller {
   list = async (req: Request, res: Response) => {
@@ -16,7 +14,7 @@ class Controller {
       });
       return res.status(200).send(question);
     } catch (e) {
-      res.status(400).send(e);
+      return res.status(400).send(e);
     }
   };
 
@@ -34,7 +32,7 @@ class Controller {
       });
       return res.status(201).send(question);
     } catch (e) {
-      res.status(400).send(e);
+      return res.status(400).send(e);
     }
   };
 
@@ -69,7 +67,7 @@ class Controller {
 
       return res.status(200).send(updated);
     } catch (e) {
-      res.status(400).send();
+      return res.status(400).send();
     }
   };
 
@@ -98,7 +96,7 @@ class Controller {
 
       return res.status(204).send("question deleted succesfully");
     } catch (e) {
-      res.status(400).send();
+      return res.status(400).send();
     }
   };
 }

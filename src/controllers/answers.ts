@@ -7,10 +7,13 @@ import { prisma } from "../server";
 class Controller {
   list = async (req: Request, res: Response) => {
     try {
-      const answers = await prisma.answer.findMany({});
+      const user: User = req.user;
+      const answers = await prisma.answer.findMany({
+        where: { userId: user.id },
+      });
       return res.status(200).send(answers);
     } catch (e) {
-      res.status(400).send(e);
+      return res.status(400).send(e);
     }
   };
 
@@ -26,7 +29,7 @@ class Controller {
 
       return res.status(201).send(answer);
     } catch (e) {
-      res.status(400).send(e);
+      return res.status(400).send(e);
     }
   };
 
@@ -57,7 +60,7 @@ class Controller {
       });
       return res.status(200).send(updated);
     } catch (e) {
-      res.status(400).send();
+      return res.status(400).send();
     }
   };
 
@@ -82,7 +85,7 @@ class Controller {
       });
       return res.status(204).send("answer deleted succesfully");
     } catch (e) {
-      res.status(400).send();
+      return res.status(400).send();
     }
   };
 }
