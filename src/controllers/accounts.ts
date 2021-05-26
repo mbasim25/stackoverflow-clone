@@ -11,16 +11,32 @@ import { secrets } from "../utils";
 
 import { User, PChange } from "../types";
 
-import multer from "multer";
-const upload = multer({ dest: "uploads/" });
+import fs from "fs";
+
+const S3 = require("aws-sdk/clients/s3");
+
+import { uploadFile } from "../utils/s3";
+
+const util = require("util");
+
+const unlinkFile = util.promisify(fs.unlink);
 
 class Controller {
   registration = async (req: Request, res: Response) => {
     try {
       const data: Account = await validators.register.validateAsync(req.body);
       data.password = await bcrypt.hash(data.password, 12);
+
+      const file = req.file;
+      const result = await uploadFile(file);
+      await unlinkFile(file.path);
+
       const account = await prisma.user.create({
-        data: { username: data.username, password: data.password },
+        data: {
+          username: data.username,
+          password: data.password,
+          image: result.Location,
+        },
       });
       return res.status(201).send(account);
     } catch (e) {
