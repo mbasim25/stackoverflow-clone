@@ -1,6 +1,7 @@
 import { Router } from "express";
 import controller from "../controllers/questions";
 import passport from "passport";
+import { METHODS } from "http";
 
 // Create the router object
 const router = Router();
