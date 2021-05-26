@@ -1,6 +1,6 @@
 import Joi from "joi";
 import joi from "joi";
-import { User, Account, PChange } from "../types";
+import { User, PChange } from "../types";
 
 export const createUser = joi.object<User>({
   username: Joi.string().min(2).max(32).required(),
@@ -33,7 +33,7 @@ export const superAdmin = joi.object<User>({
   score: Joi.number(),
 });
 
-export const register = joi.object<Account>({
+export const register = joi.object<User>({
   username: Joi.string().min(2).max(32).required(),
   firstName: Joi.string().allow(null),
   lastName: Joi.string().allow(null),
@@ -41,20 +41,12 @@ export const register = joi.object<Account>({
   password: Joi.string().min(6).required(),
 });
 
-export const login = joi.object<Account>({
-  id: Joi.string(),
+export const login = joi.object<User>({
   username: Joi.string().min(2).max(32).required(),
-  firstName: Joi.string().allow(null),
-  lastName: Joi.string().allow(null),
-  image: Joi.string().allow(null),
   password: Joi.string().min(6).required(),
 });
 
 export const PassChange = joi.object<PChange>({
   password: Joi.string(),
   newPassword: Joi.string(),
-});
-
-export const imageUpdate = joi.object<User>({
-  image: joi.string,
 });
