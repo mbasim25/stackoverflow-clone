@@ -6,7 +6,7 @@ const bucketName = process.env.AWS_BUCKET_NAME;
 const region = "eu-west-2";
 const accessKeyId = process.env.AWS_ACCESS_KEY;
 const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
-
+import multerS3 from "multer-s3";
 const s3 = new S3({
   region,
   accessKeyId,
@@ -21,6 +21,8 @@ export function uploadFile(file: Express.Multer.File) {
     Bucket: bucketName,
     Body: fileStream,
     Key: file.filename,
+    ContentType: file.mimetype,
+    ACL: "public-read",
   };
 
   return s3.upload(uploadParams).promise();

@@ -54,3 +54,7 @@ export const PassChange = joi.object<PChange>({
   password: Joi.string(),
   newPassword: Joi.string(),
 });
+
+export const imageUpdate = joi.object<User>({
+  image: joi.string,
+});

@@ -16,5 +16,11 @@ router.patch(
   passport.authenticate("jwt", { session: false }),
   controller.passwordchange
 );
+router.patch(
+  "/imageupdate",
+  passport.authenticate("jwt", { session: false }),
+  upload.single("image"),
+  controller.imageUpdate
+);
 
 export default router;

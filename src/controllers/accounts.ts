@@ -13,8 +13,6 @@ import { User, PChange } from "../types";
 
 import fs from "fs";
 
-const S3 = require("aws-sdk/clients/s3");
-
 import { uploadFile } from "../utils/s3";
 
 const util = require("util");
@@ -117,6 +115,38 @@ class Controller {
       return res.status(400).send(e);
     }
   };
+
+  imageUpdate = async (req: Request, res: Response) => {
+    try {
+      const file = req.file;
+
+      const result = await uploadFile(file);
+      await unlinkFile(file.path);
+
+      const requester: User = req.user;
+
+      const user = await prisma.user.findUnique({
+        where: {
+          id: requester.id,
+        },
+      });
+      console.log(user);
+      if (!user) {
+        return res.status(404).send("user not found");
+      } else if (user.id !== requester.id) {
+        return res.status(403).send();
+      }
+      const updated: User = await prisma.user.update({
+        where: { id: requester.id },
+        data: { image: result.Location },
+      });
+      console.log(updated);
+      return res.status(200).send(updated);
+    } catch (e) {
+      return res.status(400).send();
+    }
+  };
 }
+// ExtraArgs={"ACL": "public-read", "ContentType": "image"},
 
 export default new Controller();
