@@ -1,5 +1,4 @@
 import dotenv from "dotenv";
-import crypto from "crypto";
 
 dotenv.config({
   path: ".env",

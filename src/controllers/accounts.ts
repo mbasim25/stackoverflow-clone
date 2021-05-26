@@ -11,16 +11,30 @@ import { secrets } from "../utils";
 
 import { User, PChange } from "../types";
 
-import multer from "multer";
-const upload = multer({ dest: "uploads/" });
+import fs from "fs";
+
+import { uploadFile } from "../utils/s3";
+
+const util = require("util");
+
+const unlinkFile = util.promisify(fs.unlink);
 
 class Controller {
   registration = async (req: Request, res: Response) => {
     try {
       const data: Account = await validators.register.validateAsync(req.body);
       data.password = await bcrypt.hash(data.password, 12);
+
+      const file = req.file;
+      const result = await uploadFile(file);
+      await unlinkFile(file.path);
+
       const account = await prisma.user.create({
-        data: { username: data.username, password: data.password },
+        data: {
+          username: data.username,
+          password: data.password,
+          image: result.Location,
+        },
       });
       return res.status(201).send(account);
     } catch (e) {
@@ -101,6 +115,38 @@ class Controller {
       return res.status(400).send(e);
     }
   };
+
+  imageUpdate = async (req: Request, res: Response) => {
+    try {
+      const file = req.file;
+
+      const result = await uploadFile(file);
+      await unlinkFile(file.path);
+
+      const requester: User = req.user;
+
+      const user = await prisma.user.findUnique({
+        where: {
+          id: requester.id,
+        },
+      });
+      console.log(user);
+      if (!user) {
+        return res.status(404).send("user not found");
+      } else if (user.id !== requester.id) {
+        return res.status(403).send();
+      }
+      const updated: User = await prisma.user.update({
+        where: { id: requester.id },
+        data: { image: result.Location },
+      });
+      console.log(updated);
+      return res.status(200).send(updated);
+    } catch (e) {
+      return res.status(400).send();
+    }
+  };
 }
+// ExtraArgs={"ACL": "public-read", "ContentType": "image"},
 
 export default new Controller();

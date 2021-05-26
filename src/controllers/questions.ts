@@ -3,11 +3,17 @@ import * as validators from "../utils";
 import { Question, User } from "../types/";
 
 import { prisma } from "../server";
+import users from "./users";
 
 class Controller {
   list = async (req: Request, res: Response) => {
     try {
-      const question = await prisma.question.findMany({});
+      const user: User = req.user;
+      const question = await prisma.question.findMany({
+        where: {
+          userId: user.id,
+        },
+      });
       return res.status(200).send(question);
     } catch (e) {
       res.status(400).send(e);
