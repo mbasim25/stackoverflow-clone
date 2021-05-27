@@ -1,0 +1,55 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "StackOverFlow Clone"
+  },
+  "host": "localhost:3000",
+  "basePath": "/users",
+  "tags": [
+    {
+      "name": "accounts",
+      "desctiption": "api for accounts"
+    }
+  ],
+  "paths": {
+    "/register": {
+      "parameters": [
+        {
+          "in": "body",
+          "name": "body",
+          "description": "create a new account",
+          "schema": {
+            "$ref": "#/defenetions/account"
+          }
+        }
+      ],
+      "post": {
+        "tags": ["accounts"],
+        "summery": "register a new account",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "error"
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": ["Users"],
+        "summery": "user login",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "error"
+          }
+        }
+      }
+    }
+  }
+}
