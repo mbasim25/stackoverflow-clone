@@ -22,5 +22,6 @@ router.patch(
   upload.single("image"),
   controller.imageUpdate
 );
+router.post("/pr", controller.passReset);
 
 export default router;

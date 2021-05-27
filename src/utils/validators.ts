@@ -35,6 +35,7 @@ export const superAdmin = joi.object<User>({
 
 export const register = joi.object<User>({
   username: Joi.string().min(2).max(32).required(),
+  email: Joi.string().required(),
   firstName: Joi.string().allow(null),
   lastName: Joi.string().allow(null),
   image: Joi.string().allow(null),

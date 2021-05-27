@@ -7,6 +7,7 @@ import { secrets } from "../utils";
 import { User, PChange } from "../types";
 import fs from "fs";
 import { uploadFile } from "../utils/s3";
+import { transporter, options } from "../utils/mail";
 
 import util from "util";
 
@@ -138,6 +139,22 @@ class Controller {
     } catch (e) {
       return res.status(400).send();
     }
+  };
+
+  passReset = async (req: Request, res: Response) => {
+    const requester = req.body;
+    const user: User = await prisma.user.findUnique({
+      where: {
+        email: requester.email,
+      },
+    });
+    console.log(user);
+    console.log(requester.email);
+    if (!user) {
+      return res.status(403).send;
+    }
+    const sent = await transporter;
+    console.log(sent);
   };
 }
 // ExtraArgs={"ACL": "public-read", "ContentType": "image"},
