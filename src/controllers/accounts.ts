@@ -1,28 +1,21 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
-
 import * as validators from "../utils/validators";
-import { Account } from "../types/accounts";
-
 import { prisma } from "../server";
-
 import jwt from "jsonwebtoken";
 import { secrets } from "../utils";
-
 import { User, PChange } from "../types";
-
 import fs from "fs";
-
 import { uploadFile } from "../utils/s3";
 
-const util = require("util");
+import util from "util";
 
 const unlinkFile = util.promisify(fs.unlink);
 
 class Controller {
   registration = async (req: Request, res: Response) => {
     try {
-      const data: Account = await validators.register.validateAsync(req.body);
+      const data: User = await validators.register.validateAsync(req.body);
       data.password = await bcrypt.hash(data.password, 12);
 
       const file = req.file;
@@ -44,7 +37,7 @@ class Controller {
 
   login = async (req: Request, res: Response) => {
     try {
-      const data: Account = await validators.login.validateAsync(req.body);
+      const data: User = await validators.login.validateAsync(req.body);
       const account = await prisma.user.findUnique({
         where: {
           username: data.username,

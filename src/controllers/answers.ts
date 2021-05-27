@@ -1,16 +1,24 @@
 import { Request, Response } from "express";
 import * as validators from "../utils";
-import { Answer, Question, User } from "../types/";
-
+import { Answer, User } from "../types/";
 import { prisma } from "../server";
 
 class Controller {
   list = async (req: Request, res: Response) => {
     try {
-      const answers = await prisma.answer.findMany({});
+      const user: User = req.user;
+      const skip = req.params.skip;
+      const type = req.params.type;
+
+      const answers = await prisma.answer.findMany({
+        skip: parseInt(skip),
+        take: parseInt(type),
+        where: { userId: user.id },
+      });
+
       return res.status(200).send(answers);
     } catch (e) {
-      res.status(400).send(e);
+      return res.status(400).send(e);
     }
   };
 
@@ -20,13 +28,14 @@ class Controller {
         req.body
       );
       const user: User = req.user;
+
       const answer = await prisma.answer.create({
         data: { body: data.body, userId: user.id, questionId: data.questionId },
       });
 
       return res.status(201).send(answer);
     } catch (e) {
-      res.status(400).send(e);
+      return res.status(400).send(e);
     }
   };
 
@@ -34,19 +43,23 @@ class Controller {
     try {
       const user: User = req.user;
       const id = req.params.id;
+
       const answer = await prisma.answer.findUnique({
         where: {
           id: id,
         },
       });
+
       if (!answer) {
         return res.status(404).send("answer not found");
       } else if (answer.userId !== user.id) {
         return res.status(403).send("unauthorized access");
       }
+
       const data: Answer = await validators.av.updateAnswer.validateAsync(
         req.body
       );
+
       const updated = await prisma.answer.update({
         where: {
           id: answer.id,
@@ -55,9 +68,10 @@ class Controller {
           body: data.body,
         },
       });
+
       return res.status(200).send(updated);
     } catch (e) {
-      res.status(400).send();
+      return res.status(400).send();
     }
   };
 
@@ -65,24 +79,28 @@ class Controller {
     try {
       const user: User = req.user;
       const id = req.params.id;
+
       const answer = await prisma.answer.findUnique({
         where: {
           id: id,
         },
       });
+
       if (!answer) {
         return res.status(404).send("answer not found");
       } else if (answer.userId !== user.id) {
         return res.status(403).send("unauthorized access");
       }
+
       await prisma.answer.delete({
         where: {
           id: answer.id,
         },
       });
+
       return res.status(204).send("answer deleted succesfully");
     } catch (e) {
-      res.status(400).send();
+      return res.status(400).send();
     }
   };
 }

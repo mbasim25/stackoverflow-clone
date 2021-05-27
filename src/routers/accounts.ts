@@ -1,7 +1,7 @@
 import { Router } from "express";
 import controller from "../controllers/accounts";
 import passport from "passport";
-const multer = require("multer");
+import multer from "multer";
 const upload = multer({ dest: "uploads/" });
 
 // Create the router object

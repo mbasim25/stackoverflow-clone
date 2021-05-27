@@ -1,22 +1,26 @@
 import { Request, Response } from "express";
 import * as validators from "../utils";
 import { Question, User } from "../types/";
-
 import { prisma } from "../server";
-import users from "./users";
 
 class Controller {
   list = async (req: Request, res: Response) => {
     try {
+      const skip = req.params.skip;
+      const type = req.params.type;
       const user: User = req.user;
+
       const question = await prisma.question.findMany({
+        skip: parseInt(skip),
+        take: parseInt(type),
         where: {
           userId: user.id,
         },
       });
+
       return res.status(200).send(question);
     } catch (e) {
-      res.status(400).send(e);
+      return res.status(400).send(e);
     }
   };
 
@@ -26,15 +30,17 @@ class Controller {
         req.body
       );
       const user: User = req.user;
+
       const question = await prisma.question.create({
         data: {
           userId: user.id,
           body: data.body,
         },
       });
+
       return res.status(201).send(question);
     } catch (e) {
-      res.status(400).send(e);
+      return res.status(400).send(e);
     }
   };
 
@@ -42,6 +48,7 @@ class Controller {
     try {
       const user: User = req.user;
       const id = req.params.id;
+
       const question = await prisma.question.findUnique({
         where: {
           id: id,
@@ -53,7 +60,6 @@ class Controller {
       } else if (question.userId !== user.id && !user.isAdmin) {
         return res.status(403).send("unauthorized access");
       }
-
       const data: Question = await validators.qv.updateQuestion.validateAsync(
         req.body
       );
@@ -69,7 +75,7 @@ class Controller {
 
       return res.status(200).send(updated);
     } catch (e) {
-      res.status(400).send();
+      return res.status(400).send();
     }
   };
 
@@ -98,7 +104,7 @@ class Controller {
 
       return res.status(204).send("question deleted succesfully");
     } catch (e) {
-      res.status(400).send();
+      return res.status(400).send();
     }
   };
 }
