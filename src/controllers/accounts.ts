@@ -4,11 +4,10 @@ import * as validators from "../utils/validators";
 import { prisma } from "../server";
 import jwt from "jsonwebtoken";
 import { secrets } from "../utils";
-import { User, PChange } from "../types";
+import { User, PChange, ResetPass, PR } from "../types";
 import fs from "fs";
 import { uploadFile } from "../utils/s3";
 import { transporter } from "../utils/mail";
-
 import util from "util";
 require("dotenv").config();
 
@@ -32,9 +31,9 @@ class Controller {
           email: data.email,
         },
       });
-      return res.status(201).send(account);
+      return res.status(201).send(account.username);
     } catch (e) {
-      return res.status(400).send(e);
+      return res.status(400).send();
     }
   };
 
@@ -56,7 +55,7 @@ class Controller {
       });
       return res.status(200).send({ token });
     } catch (e) {
-      return res.status(400).send(e);
+      return res.status(400).send();
     }
   };
 
@@ -87,7 +86,7 @@ class Controller {
         },
       });
 
-      const data: PChange = await validators.PassChange.validateAsync(req.body);
+      const data: PChange = await validators.passChange.validateAsync(req.body);
 
       if (!(await bcrypt.compare(data.password, user.password))) {
         return res.status(400).send("incorrect password");
@@ -106,9 +105,9 @@ class Controller {
         },
       });
 
-      return res.status(200).send(account);
+      return res.status(200).send("password changed");
     } catch (e) {
-      return res.status(400).send(e);
+      return res.status(400).send();
     }
   };
 
@@ -126,36 +125,40 @@ class Controller {
           id: requester.id,
         },
       });
-      console.log(user);
+
       if (!user) {
         return res.status(404).send("user not found");
       } else if (user.id !== requester.id) {
         return res.status(403).send();
       }
+
       const updated: User = await prisma.user.update({
         where: { id: requester.id },
         data: { image: result.Location },
       });
-      console.log(updated);
-      return res.status(200).send(updated);
+
+      return res.status(200).send("image was updated");
     } catch (e) {
       return res.status(400).send();
     }
   };
 
-  passReset = async (req: Request, res: Response) => {
+  emailToken = async (req: Request, res: Response) => {
     try {
-      const { email, username } = req.body;
+      const data: PR = await validators.emailToken.validateAsync(req.body);
+
       const user = await prisma.user.findUnique({
         where: {
-          username: username,
+          username: data.username,
         },
       });
+
       if (!user) {
         return res.status(404).send("no user found");
-      } else if (user.email !== email) {
-        return res.status(403).send("error proccessing data");
+      } else if (user.email !== data.email) {
+        return res.status(403).send("the data the was provided is incorrect");
       }
+
       const random = Math.floor(100000 + Math.random() * 900000).toString();
       const options: any = {
         from: process.env.email,
@@ -163,13 +166,58 @@ class Controller {
         subject: "Password Reset",
         text: random,
       };
+
+      const token = await prisma.resetToken.create({
+        data: {
+          email: user.email,
+          uniqueKey: random,
+        },
+      });
+
       transporter.sendMail(options, (error: any, success: any) => {
         if (error) {
           return res.status(400).send("error sending the email");
         }
         return res.status(200).send(success);
       });
-    } catch (e) {}
+
+      return res.status(200).send();
+    } catch (e) {
+      res.status(400).send();
+    }
+  };
+
+  passReset = async (req: Request, res: Response) => {
+    try {
+      const data: ResetPass = await validators.rPass.validateAsync(req.body);
+      const token = await prisma.resetToken.findFirst({
+        where: {
+          AND: {
+            email: { equals: data.email },
+            uniqueKey: { equals: data.uniqueKey },
+          },
+        },
+      });
+
+      if (!token) {
+        return res.status(404).send();
+      }
+
+      data.password = await bcrypt.hash(data.password, 12);
+
+      const user = await prisma.user.update({
+        where: {
+          username: data.username,
+        },
+        data: {
+          password: data.password,
+        },
+      });
+
+      return res.status(200).send("password changed");
+    } catch (e) {
+      return res.status(400).send();
+    }
   };
 }
 

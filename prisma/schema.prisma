@@ -23,6 +23,7 @@ model User {
   Answer       Answer[]
   QuesComment  QuesComment[]
   AnsComment   AnsComment[]
+
 }
 
 model Question {

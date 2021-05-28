@@ -2,6 +2,7 @@
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
     "username" TEXT NOT NULL,
+    "email" TEXT,
     "firstName" TEXT,
     "lastName" TEXT,
     "image" TEXT,
@@ -55,11 +56,17 @@ CREATE TABLE "AnsComment" (
     PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "resetToken" (
+    "id" TEXT NOT NULL,
+    "uniqueKey" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+
+    PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User.username_unique" ON "User"("username");
-
--- AddForeignKey
-ALTER TABLE "Question" ADD FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "QuesComment" ADD FOREIGN KEY ("questionId") REFERENCES "Question"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -72,6 +79,9 @@ ALTER TABLE "AnsComment" ADD FOREIGN KEY ("answerId") REFERENCES "Answer"("id") 
 
 -- AddForeignKey
 ALTER TABLE "AnsComment" ADD FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Question" ADD FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Answer" ADD FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -1,9 +1,7 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
-
 import * as validators from "../utils/validators";
 import { User } from "../types";
-
 import { prisma } from "../server";
 
 class Controller {
@@ -13,10 +11,10 @@ class Controller {
       if (!admin.isSuperAdmin) {
         res.send(401).send();
       }
-      const user = await prisma.user.findMany({});
-      return res.status(200).send(user);
+      const users = await prisma.user.findMany({});
+      return res.status(200).send(users);
     } catch (e) {
-      res.status(400).send(e);
+      res.status(400).send();
     }
   };
 
@@ -30,9 +28,9 @@ class Controller {
           password: data.password,
         },
       });
-      return res.status(201).send(user);
+      return res.status(201).send(user.username);
     } catch (e) {
-      res.status(400).send(e);
+      res.status(400).send();
     }
   };
 
@@ -44,8 +42,6 @@ class Controller {
       }
 
       const data: User = await validators.updateUser.validateAsync(req.body);
-
-      //do i put a findUnique user to get a 404?
 
       const user = await prisma.user.update({
         where: {
@@ -60,9 +56,9 @@ class Controller {
         return res.status(404).send();
       }
 
-      return res.status(200).send(user);
+      return res.status(200).send("user updated");
     } catch (e) {
-      res.status(400).send(e);
+      res.status(400).send();
     }
   };
 

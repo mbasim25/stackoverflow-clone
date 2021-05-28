@@ -22,7 +22,9 @@ export interface PR {
   email?: string;
 }
 
-export interface ResetToken {
+export interface ResetPass {
   uniqueKey?: string;
   email?: string;
+  username?: string;
+  password?: string;
 }
