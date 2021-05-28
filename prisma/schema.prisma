@@ -10,7 +10,7 @@ generator client {
 model User {
   id           String        @id @default(cuid())
   username     String        @unique
-  email        String?       @unique
+  email        String?
   firstName    String?
   lastName     String?
   image        String?
@@ -63,4 +63,10 @@ model AnsComment {
   answer   Answer @relation(fields: [answerId], references: [id])
   user     User   @relation(fields: [userId], references: [id])
   userId   String
+}
+
+model resetToken {
+  id        String @id @default(cuid())
+  uniqueKey String
+  email     String
 }

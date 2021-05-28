@@ -16,3 +16,13 @@ export interface PChange {
   password?: string;
   newPassword?: string;
 }
+
+export interface PR {
+  username?: string;
+  email?: string;
+}
+
+export interface ResetToken {
+  uniqueKey?: string;
+  email?: string;
+}

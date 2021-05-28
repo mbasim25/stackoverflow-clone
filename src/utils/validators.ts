@@ -1,6 +1,6 @@
 import Joi from "joi";
 import joi from "joi";
-import { User, PChange } from "../types";
+import { User, PChange, PR, ResetToken } from "../types";
 
 export const createUser = joi.object<User>({
   username: Joi.string().min(2).max(32).required(),
@@ -50,4 +50,14 @@ export const login = joi.object<User>({
 export const PassChange = joi.object<PChange>({
   password: Joi.string(),
   newPassword: Joi.string(),
+});
+
+export const PassReset = joi.object<PR>({
+  username: Joi.string().required(),
+  email: Joi.string().required(),
+});
+
+export const RToken = joi.object<ResetToken>({
+  email: Joi.string().required(),
+  uniqueKey: Joi.string().required().min(5).max(7),
 });

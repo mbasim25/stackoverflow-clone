@@ -7,9 +7,10 @@ import { secrets } from "../utils";
 import { User, PChange } from "../types";
 import fs from "fs";
 import { uploadFile } from "../utils/s3";
-import { transporter, options } from "../utils/mail";
+import { transporter } from "../utils/mail";
 
 import util from "util";
+require("dotenv").config();
 
 const unlinkFile = util.promisify(fs.unlink);
 
@@ -28,6 +29,7 @@ class Controller {
           username: data.username,
           password: data.password,
           image: result.Location,
+          email: data.email,
         },
       });
       return res.status(201).send(account);
@@ -142,21 +144,33 @@ class Controller {
   };
 
   passReset = async (req: Request, res: Response) => {
-    const requester = req.body;
-    const user: User = await prisma.user.findUnique({
-      where: {
-        email: requester.email,
-      },
-    });
-    console.log(user);
-    console.log(requester.email);
-    if (!user) {
-      return res.status(403).send;
-    }
-    const sent = await transporter;
-    console.log(sent);
+    try {
+      const { email, username } = req.body;
+      const user = await prisma.user.findUnique({
+        where: {
+          username: username,
+        },
+      });
+      if (!user) {
+        return res.status(404).send("no user found");
+      } else if (user.email !== email) {
+        return res.status(403).send("error proccessing data");
+      }
+      const random = Math.floor(100000 + Math.random() * 900000).toString();
+      const options: any = {
+        from: process.env.email,
+        to: user.email,
+        subject: "Password Reset",
+        text: random,
+      };
+      transporter.sendMail(options, (error: any, success: any) => {
+        if (error) {
+          return res.status(400).send("error sending the email");
+        }
+        return res.status(200).send(success);
+      });
+    } catch (e) {}
   };
 }
-// ExtraArgs={"ACL": "public-read", "ContentType": "image"},
 
 export default new Controller();
