@@ -11,8 +11,8 @@ class Controller {
       const take = req.params.take;
 
       const answers = await prisma.answer.findMany({
-        skip: parseInt(skip),
-        take: parseInt(take),
+        skip: parseInt(skip) || 0,
+        take: parseInt(take) || 10,
         where: { userId: user.id },
       });
 

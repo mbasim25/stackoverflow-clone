@@ -31,6 +31,7 @@ class Controller {
           email: data.email,
         },
       });
+      delete account.password;
       return res.status(201).send(account);
     } catch (e) {
       console.log(e);
@@ -66,6 +67,7 @@ class Controller {
       const sa = await prisma.user.create({
         data: {
           username: req.body.username,
+          email: req.body.email,
           password: req.body.password,
           isAdmin: true,
           isSuperAdmin: true,

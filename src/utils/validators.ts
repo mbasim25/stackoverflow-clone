@@ -4,6 +4,7 @@ import { User, PChange, PR, ResetPass } from "../types";
 
 export const createUser = joi.object<User>({
   username: Joi.string().min(2).max(32).required(),
+  email: Joi.string().min(6).required(),
   firstName: Joi.string().allow(null),
   lastName: Joi.string().allow(null),
   image: Joi.string().allow(null),
@@ -14,7 +15,8 @@ export const createUser = joi.object<User>({
 });
 
 export const updateUser = joi.object<User>({
-  username: Joi.string().min(2).max(32).required(),
+  username: Joi.string().min(2).max(32),
+  email: Joi.string().min(6),
   firstName: Joi.string().allow(null),
   lastName: Joi.string().allow(null),
   image: Joi.string().allow(null),
@@ -26,6 +28,7 @@ export const updateUser = joi.object<User>({
 export const superAdmin = joi.object<User>({
   id: Joi.string(),
   username: Joi.string().min(2).max(32).required(),
+  email: Joi.string().min(2).required(),
   firstName: Joi.string().allow(null),
   lastName: Joi.string().allow(null),
   image: Joi.string().allow(null),
@@ -51,8 +54,8 @@ export const login = joi.object<User>({
 });
 
 export const passChange = joi.object<PChange>({
-  password: Joi.string(),
-  newPassword: Joi.string(),
+  password: Joi.string().required(),
+  newPassword: Joi.string().required(),
 });
 
 export const emailToken = joi.object<PR>({

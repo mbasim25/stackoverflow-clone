@@ -3,6 +3,10 @@ import bcrypt from "bcrypt";
 import * as validators from "../utils/validators";
 import { User } from "../types";
 import { prisma } from "../server";
+import util from "util";
+import fs from "fs";
+import { uploadFile } from "../utils/s3";
+const unlinkFile = util.promisify(fs.unlink);
 
 class Controller {
   list = async (req: Request, res: Response) => {
@@ -20,12 +24,19 @@ class Controller {
 
   create = async (req: Request, res: Response) => {
     try {
-      const data: User = await validators.superAdmin.validateAsync(req.body);
+      const data: User = await validators.createUser.validateAsync(req.body);
       data.password = await bcrypt.hash(data.password, 12);
+
+      const file = req.file;
+      const result = await uploadFile(file);
+      await unlinkFile(file.path);
+
       const user = await prisma.user.create({
         data: {
           username: data.username,
+          email: data.email,
           password: data.password,
+          image: result.Location,
         },
       });
       return res.status(201).send(user.username);
@@ -78,7 +89,7 @@ class Controller {
       }
       return res.status(204).send("user deleted");
     } catch (e) {
-      res.status(400).send();
+      res.status(400).send(e);
     }
   };
 }
