@@ -10,7 +10,7 @@ generator client {
 model User {
   id           String        @id @default(cuid())
   username     String        @unique
-  email        String?
+  email        String?       @unique
   firstName    String?
   lastName     String?
   image        String?
@@ -24,6 +24,7 @@ model User {
   QuesComment  QuesComment[]
   AnsComment   AnsComment[]
 
+  resetToken resetToken[]
 }
 
 model Question {
@@ -68,6 +69,8 @@ model AnsComment {
 
 model resetToken {
   id        String @id @default(cuid())
-  uniqueKey String
+  uniqueKey String @unique
+  user      User   @relation(fields: [userId], references: [id])
   email     String
+  userId    String
 }

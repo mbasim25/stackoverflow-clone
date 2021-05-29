@@ -18,13 +18,12 @@ export interface PChange {
 }
 
 export interface PR {
-  username?: string;
   email?: string;
 }
 
 export interface ResetPass {
   uniqueKey?: string;
   email?: string;
-  username?: string;
+  userId?: string;
   password?: string;
 }

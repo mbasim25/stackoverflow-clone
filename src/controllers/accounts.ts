@@ -152,7 +152,7 @@ class Controller {
 
       const user = await prisma.user.findUnique({
         where: {
-          username: data.username,
+          email: data.email,
         },
       });
 
@@ -170,9 +170,10 @@ class Controller {
         text: random,
       };
 
-      const token = await prisma.resetToken.create({
+      const token: ResetPass = await prisma.resetToken.create({
         data: {
           email: user.email,
+          userId: user.id,
           uniqueKey: random,
         },
       });
@@ -193,12 +194,9 @@ class Controller {
   passReset = async (req: Request, res: Response) => {
     try {
       const data: ResetPass = await validators.rPass.validateAsync(req.body);
-      const token = await prisma.resetToken.findFirst({
+      const token = await prisma.resetToken.findUnique({
         where: {
-          AND: {
-            email: { equals: data.email },
-            uniqueKey: { equals: data.uniqueKey },
-          },
+          uniqueKey: data.uniqueKey,
         },
       });
 
@@ -210,7 +208,7 @@ class Controller {
 
       const user = await prisma.user.update({
         where: {
-          username: data.username,
+          email: data.email,
         },
         data: {
           password: data.password,

@@ -59,13 +59,12 @@ export const passChange = joi.object<PChange>({
 });
 
 export const emailToken = joi.object<PR>({
-  username: Joi.string().required(),
   email: Joi.string().required(),
 });
 
 export const rPass = joi.object<ResetPass>({
   email: Joi.string().required(),
-  username: Joi.string().required(),
+  userId: Joi.string(),
   uniqueKey: Joi.string().required().min(5).max(7),
   password: Joi.string().required(),
 });
