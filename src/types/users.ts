@@ -1,6 +1,7 @@
 export interface User {
   id?: string;
   username?: string;
+  email?: string;
   firstName?: string;
   lastName?: string;
   image?: string;
@@ -14,4 +15,16 @@ export interface User {
 export interface PChange {
   password?: string;
   newPassword?: string;
+}
+
+export interface PR {
+  username?: string;
+  email?: string;
+}
+
+export interface ResetPass {
+  uniqueKey?: string;
+  email?: string;
+  username?: string;
+  password?: string;
 }

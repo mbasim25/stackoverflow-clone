@@ -8,17 +8,17 @@ class Controller {
     try {
       const user: User = req.user;
       const skip = req.params.skip;
-      const type = req.params.type;
+      const take = req.params.take;
 
       const answers = await prisma.answer.findMany({
         skip: parseInt(skip),
-        take: parseInt(type),
+        take: parseInt(take),
         where: { userId: user.id },
       });
 
       return res.status(200).send(answers);
     } catch (e) {
-      return res.status(400).send(e);
+      return res.status(400).send();
     }
   };
 
@@ -35,7 +35,7 @@ class Controller {
 
       return res.status(201).send(answer);
     } catch (e) {
-      return res.status(400).send(e);
+      return res.status(400).send();
     }
   };
 
@@ -69,7 +69,7 @@ class Controller {
         },
       });
 
-      return res.status(200).send(updated);
+      return res.status(200).send(updated.body);
     } catch (e) {
       return res.status(400).send();
     }

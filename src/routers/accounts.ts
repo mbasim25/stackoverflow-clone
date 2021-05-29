@@ -22,5 +22,7 @@ router.patch(
   upload.single("image"),
   controller.imageUpdate
 );
+router.post("/email-reset", controller.emailToken);
+router.patch("/password-reset", controller.passReset);
 
 export default router;
