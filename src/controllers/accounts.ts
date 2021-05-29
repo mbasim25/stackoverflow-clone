@@ -31,9 +31,10 @@ class Controller {
           email: data.email,
         },
       });
-      return res.status(201).send(account.username);
+      return res.status(201).send(account);
     } catch (e) {
-      return res.status(400).send();
+      console.log(e);
+      return res.status(400).send(e);
     }
   };
 
