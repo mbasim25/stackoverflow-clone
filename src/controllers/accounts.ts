@@ -47,9 +47,12 @@ class Controller {
           username: data.username,
         },
       });
-
-      if (!(await bcrypt.compare(data.password, account.password))) {
-        throw new Error("username or password were incorrect");
+      if (!account.isActive) {
+        return res
+          .status(403)
+          .send("this account was deactivated by moderators");
+      } else if (!(await bcrypt.compare(data.password, account.password))) {
+        return res.status(403).send("username or password were incorrect");
       }
 
       const token = jwt.sign({ id: account.id }, secrets.SECRET_KEY, {

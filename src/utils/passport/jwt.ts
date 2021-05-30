@@ -23,7 +23,9 @@ const verify: VerifyCallback = async (payload, done) => {
         id: id,
       },
     });
-    // console.log(user);
+    if (!user.isActive) {
+      throw new Error("this account was deactivated by moderators");
+    }
     done(null, user);
   } catch (e) {
     done(e, null);
