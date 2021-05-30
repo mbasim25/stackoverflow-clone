@@ -9,7 +9,6 @@ import fs from "fs";
 import { uploadFile } from "../utils/s3";
 import { transporter } from "../utils/mail";
 import util from "util";
-require("dotenv").config();
 
 const unlinkFile = util.promisify(fs.unlink);
 
@@ -167,7 +166,7 @@ class Controller {
 
       const random = Math.floor(100000 + Math.random() * 900000).toString();
       const options: any = {
-        from: process.env.email,
+        from: secrets.email,
         to: user.email,
         subject: "Password Reset",
         text: random,
