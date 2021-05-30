@@ -2,6 +2,8 @@ import Joi from "joi";
 import joi from "joi";
 import { Answer } from "../types";
 
+// Answers Validation
+
 export const createAnswer = joi.object<Answer>({
   body: Joi.string().required(),
   userId: Joi.string(),

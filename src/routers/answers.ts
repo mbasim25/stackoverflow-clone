@@ -7,10 +7,18 @@ const router = Router();
 
 router.use(passport.authenticate("jwt", { session: false }));
 
-// LCUD or CRUD
+//CRUD
+
+// Get a list of answers
 router.get("", controller.list);
+
+// create an answer
 router.post("/", controller.create);
+
+// Update an answer if owner or an admin
 router.patch("/:id", controller.update);
+
+// Delete an answer if owner or an admin
 router.delete("/:id", controller.destroy);
 
 export default router;

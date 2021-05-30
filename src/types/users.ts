@@ -12,15 +12,18 @@ export interface User {
   score?: number;
 }
 
+// Password update when authenticated and the old password is known
 export interface PChange {
   password?: string;
   newPassword?: string;
 }
 
+// Sending email in case of a password reset
 export interface PR {
   email?: string;
 }
 
+// Password reset when the user in not authenticated and old password is forgotten
 export interface ResetPass {
   uniqueKey?: string;
   email?: string;

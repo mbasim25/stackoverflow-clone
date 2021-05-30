@@ -5,10 +5,10 @@ import {
   VerifyCallback,
 } from "passport-jwt";
 import { SECRET_KEY } from "../secrets";
-
 import { prisma } from "../../server";
-
 import { User } from "../../types";
+
+// JWT integration for token authentication
 
 const options: StrategyOptions = {
   secretOrKey: SECRET_KEY,

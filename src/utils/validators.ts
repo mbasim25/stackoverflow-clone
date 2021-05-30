@@ -2,6 +2,10 @@ import Joi from "joi";
 import joi from "joi";
 import { User, PChange, PR, ResetPass } from "../types";
 
+// User Validation
+// user = created by super admin
+// account = a normal user
+
 export const createUser = joi.object<User>({
   username: Joi.string().min(2).max(32).required(),
   email: Joi.string().min(6).required(),
@@ -53,15 +57,18 @@ export const login = joi.object<User>({
   password: Joi.string().min(6).required(),
 });
 
+// Password update when authenticated and the old password is known
 export const passChange = joi.object<PChange>({
   password: Joi.string().required(),
   newPassword: Joi.string().required(),
 });
 
+// Sending email in case of a password reset
 export const emailToken = joi.object<PR>({
   email: Joi.string().required(),
 });
 
+// Password reset when the user in not authenticated and old password is forgotten
 export const rPass = joi.object<ResetPass>({
   email: Joi.string().required(),
   userId: Joi.string(),
