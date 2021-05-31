@@ -70,9 +70,10 @@ class Controller {
         where: { id: requester.id },
       });
 
+      delete profile.password;
+
       return res.status(200).send(profile);
     } catch (e) {
-      console.log(e);
       return res.status(400).send();
     }
   };
