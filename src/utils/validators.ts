@@ -57,6 +57,13 @@ export const login = joi.object<User>({
   password: Joi.string().min(6).required(),
 });
 
+export const updateAccount = joi.object<User>({
+  username: Joi.string().min(2).max(32),
+  email: Joi.string().min(6),
+  firstName: Joi.string().allow(null),
+  lastName: Joi.string().allow(null),
+});
+
 // Password update when authenticated and the old password is known
 export const passChange = joi.object<PChange>({
   password: Joi.string().required(),
@@ -71,7 +78,6 @@ export const emailToken = joi.object<PR>({
 // Password reset when the user in not authenticated and old password is forgotten
 export const rPass = joi.object<ResetPass>({
   email: Joi.string().required(),
-  userId: Joi.string(),
   uniqueKey: Joi.string().required().min(5).max(7),
   password: Joi.string().required(),
 });

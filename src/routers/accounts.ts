@@ -26,10 +26,10 @@ router.patch(
 
 // Update profile image
 router.patch(
-  "/imageupdate",
+  "/account-update",
   passport.authenticate("jwt", { session: false }),
   upload.single("image"),
-  controller.imageUpdate
+  controller.updateAccount
 );
 
 // Send email for password reset when non authenticated

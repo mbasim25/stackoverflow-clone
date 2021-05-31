@@ -41,7 +41,8 @@ class Controller {
       });
       return res.status(201).send(user.username);
     } catch (e) {
-      res.status(400).send();
+      console.log(e);
+      res.status(400).send(e);
     }
   };
 

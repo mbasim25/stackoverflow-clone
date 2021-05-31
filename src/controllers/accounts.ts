@@ -116,9 +116,10 @@ class Controller {
     }
   };
 
-  imageUpdate = async (req: Request, res: Response) => {
+  updateAccount = async (req: Request, res: Response) => {
     try {
       const file = req.file;
+      const data: User = await validators.updateAccount.validateAsync(req.body);
 
       const result = await uploadFile(file);
       await unlinkFile(file.path);
@@ -139,11 +140,17 @@ class Controller {
 
       const updated: User = await prisma.user.update({
         where: { id: requester.id },
-        data: { image: result.Location },
+        data: {
+          username: data.username,
+          password: data.password,
+          image: result.Location,
+          email: data.email,
+        },
       });
 
-      return res.status(200).send("image was updated");
+      return res.status(200).send(updated);
     } catch (e) {
+      console.log(e);
       return res.status(400).send();
     }
   };
