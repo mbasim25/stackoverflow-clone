@@ -14,6 +14,13 @@ router.post("/register", upload.single("image"), controller.registration);
 // Login
 router.post("/login", controller.login);
 
+// Get Profile
+router.get(
+  "/profile",
+  passport.authenticate("jwt", { session: false }),
+  controller.profile
+);
+
 // Super admin for development only
 router.post("/super", controller.super);
 

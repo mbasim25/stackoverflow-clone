@@ -63,6 +63,20 @@ class Controller {
     }
   };
 
+  profile = async (req: Request, res: Response) => {
+    try {
+      const requester: User = req.user;
+      const profile = await prisma.user.findUnique({
+        where: { id: requester.id },
+      });
+
+      return res.status(200).send(profile);
+    } catch (e) {
+      console.log(e);
+      return res.status(400).send();
+    }
+  };
+
   super = async (req: Request, res: Response) => {
     try {
       req.body.password = await bcrypt.hash(req.body.password, 12);
