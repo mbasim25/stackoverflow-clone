@@ -14,6 +14,9 @@ router.post("/register", upload.single("image"), controller.registration);
 // Login
 router.post("/login", controller.login);
 
+// Refresh token
+router.post("/refresh-token", controller.refreshToken);
+
 // Get Profile
 router.get(
   "/profile",

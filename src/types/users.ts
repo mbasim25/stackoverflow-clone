@@ -30,3 +30,8 @@ export interface ResetPass {
   userId?: string;
   password?: string;
 }
+
+// refresh token
+export interface ResetToken {
+  token?: string;
+}

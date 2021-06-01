@@ -4,7 +4,7 @@ import * as validators from "../utils/validators";
 import { prisma } from "../server";
 import jwt from "jsonwebtoken";
 import { secrets } from "../utils";
-import { User, PChange, ResetPass, PR } from "../types";
+import { User, PChange, ResetPass, PR, ResetToken } from "../types";
 import fs from "fs";
 import { uploadFile } from "../utils/s3";
 import { transporter } from "../utils/mail";
@@ -54,13 +54,59 @@ class Controller {
         return res.status(403).send("username or password were incorrect");
       }
 
-      const token = jwt.sign({ id: account.id }, secrets.SECRET_KEY, {
-        expiresIn: "24h",
-      });
-      const refresh_token = jwt.sign({ id: account.id }, secrets.SECRET_KEY, {
-        expiresIn: "29d",
-      });
+      const token = jwt.sign(
+        { id: account.id, type: "ACCESS" },
+        secrets.SECRET_KEY,
+        {
+          expiresIn: "24h",
+        }
+      );
+      const refresh_token = jwt.sign(
+        { id: account.id, type: "REFRESH" },
+        secrets.SECRET_KEY,
+        {
+          expiresIn: "1h",
+        }
+      );
       return res.status(200).send({ token, refresh_token });
+    } catch (e) {
+      return res.status(400).send();
+    }
+  };
+
+  refreshToken = async (req: Request, res: Response) => {
+    try {
+      const refresh = jwt.decode(req.body.refreshToken, {
+        complete: true,
+      });
+
+      const user: User = await prisma.user.findUnique({
+        where: {
+          id: refresh.payload.id,
+        },
+      });
+
+      if (!user) {
+        return res.status(404).send("unable to refresh ur token ");
+      }
+
+      const token = jwt.sign(
+        { id: user.id, type: "ACCESS" },
+        secrets.SECRET_KEY,
+        {
+          expiresIn: "24h",
+        }
+      );
+
+      const refresh_token = jwt.sign(
+        { id: user.id, type: "REFRESH" },
+        secrets.SECRET_KEY,
+        {
+          expiresIn: "1h",
+        }
+      );
+
+      return res.status(200).send({ token, refresh_token, user });
     } catch (e) {
       return res.status(400).send();
     }

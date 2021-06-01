@@ -17,6 +17,10 @@ const options: StrategyOptions = {
 
 const verify: VerifyCallback = async (payload, done) => {
   try {
+    if (payload.type !== "ACCESS") {
+      throw Error("");
+    }
+
     const id = payload.id;
     const user: User = await prisma.user.findUnique({
       where: {
