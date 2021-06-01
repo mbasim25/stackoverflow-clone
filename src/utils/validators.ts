@@ -1,6 +1,6 @@
 import Joi from "joi";
 import joi from "joi";
-import { User, PChange, PR, ResetPass } from "../types";
+import { User, PassChange, EmailPassReset, PassReset } from "../types";
 
 // User Validation
 // user = created by super admin
@@ -65,18 +65,18 @@ export const updateAccount = joi.object<User>({
 });
 
 // Password update when authenticated and the old password is known
-export const passChange = joi.object<PChange>({
+export const passChange = joi.object<PassChange>({
   password: Joi.string().required(),
   newPassword: Joi.string().required(),
 });
 
 // Sending email in case of a password reset
-export const emailToken = joi.object<PR>({
+export const emailToken = joi.object<EmailPassReset>({
   email: Joi.string().required(),
 });
 
 // Password reset when the user in not authenticated and old password is forgotten
-export const rPass = joi.object<ResetPass>({
+export const passReset = joi.object<PassReset>({
   email: Joi.string().required(),
   uniqueKey: Joi.string().required().min(5).max(7),
   password: Joi.string().required(),

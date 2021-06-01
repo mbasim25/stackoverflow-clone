@@ -13,18 +13,18 @@ export interface User {
 }
 
 // Password update when authenticated and the old password is known
-export interface PChange {
+export interface PassChange {
   password?: string;
   newPassword?: string;
 }
 
 // Sending email in case of a password reset
-export interface PR {
+export interface EmailPassReset {
   email?: string;
 }
 
 // Password reset when the user in not authenticated and old password is forgotten
-export interface ResetPass {
+export interface PassReset {
   uniqueKey?: string;
   email?: string;
   userId?: string;

@@ -4,7 +4,13 @@ import * as validators from "../utils/validators";
 import { prisma } from "../server";
 import jwt from "jsonwebtoken";
 import { secrets } from "../utils";
-import { User, PChange, ResetPass, PR, ResetToken } from "../types";
+import {
+  User,
+  PassChange,
+  PassReset,
+  EmailPassReset,
+  ResetToken,
+} from "../types";
 import fs from "fs";
 import { uploadFile } from "../utils/s3";
 import { transporter } from "../utils/mail";
@@ -155,7 +161,9 @@ class Controller {
         },
       });
 
-      const data: PChange = await validators.passChange.validateAsync(req.body);
+      const data: PassChange = await validators.passChange.validateAsync(
+        req.body
+      );
 
       if (!(await bcrypt.compare(data.password, user.password))) {
         return res.status(400).send("incorrect password");
@@ -221,7 +229,9 @@ class Controller {
 
   emailToken = async (req: Request, res: Response) => {
     try {
-      const data: PR = await validators.emailToken.validateAsync(req.body);
+      const data: EmailPassReset = await validators.emailToken.validateAsync(
+        req.body
+      );
 
       const user = await prisma.user.findUnique({
         where: {
@@ -243,7 +253,7 @@ class Controller {
         text: random,
       };
 
-      const token: ResetPass = await prisma.resetToken.create({
+      const token: PassReset = await prisma.resetToken.create({
         data: {
           email: user.email,
           userId: user.id,
@@ -266,7 +276,9 @@ class Controller {
 
   passReset = async (req: Request, res: Response) => {
     try {
-      const data: ResetPass = await validators.rPass.validateAsync(req.body);
+      const data: PassReset = await validators.passReset.validateAsync(
+        req.body
+      );
       const token = await prisma.resetToken.findUnique({
         where: {
           uniqueKey: data.uniqueKey,
