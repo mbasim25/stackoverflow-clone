@@ -23,8 +23,7 @@ model User {
   Answer       Answer[]
   QuesComment  QuesComment[]
   AnsComment   AnsComment[]
-
-  resetToken resetToken[]
+  ResetToken   ResetToken[]
 }
 
 model Question {
@@ -67,7 +66,7 @@ model AnsComment {
   userId   String
 }
 
-model resetToken {
+model ResetToken {
   id        String @id @default(cuid())
   uniqueKey String @unique
   user      User   @relation(fields: [userId], references: [id])
