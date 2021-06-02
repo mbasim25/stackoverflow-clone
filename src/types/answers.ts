@@ -5,3 +5,10 @@ export interface Answer {
   userId?: string;
   questionId?: string;
 }
+
+export interface AnswerLike {
+  id?: number;
+  userId?: string;
+  answerId?: string;
+  type?: any;
+}

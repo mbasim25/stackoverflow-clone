@@ -1,6 +1,6 @@
 import Joi from "joi";
 import joi from "joi";
-import { Question, QuestionLikes } from "../types";
+import { Question, QuestionLike } from "../types";
 
 // Questions Validation
 
@@ -14,11 +14,11 @@ export const updateQuestion = joi.object<Question>({
   userId: Joi.string(),
 });
 
-export const questionLike = joi.object<QuestionLikes>({
+export const questionLike = joi.object<QuestionLike>({
   questionId: Joi.string().required(),
   type: Joi.string().required(),
 });
 
-export const questionLikeUpdate = joi.object<QuestionLikes>({
+export const questionLikeUpdate = joi.object<QuestionLike>({
   type: Joi.string().required(),
 });

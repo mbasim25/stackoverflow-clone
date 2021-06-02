@@ -5,9 +5,9 @@ export interface Question {
   userId?: string;
 }
 
-export interface QuestionLikes {
+export interface QuestionLike {
   id?: number;
   userId?: string;
   questionId?: string;
-  type?: string;
+  type?: any;
 }

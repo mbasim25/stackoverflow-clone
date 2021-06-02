@@ -1,5 +1,5 @@
 import { Router } from "express";
-import controller from "../controllers/questionLike";
+import controller from "../controllers/answerLike";
 import passport from "passport";
 
 // Create the router object

@@ -8,34 +8,35 @@ generator client {
 }
 
 model User {
-  id           String          @id @default(cuid())
-  username     String          @unique
-  email        String?         @unique
-  firstName    String?
-  lastName     String?
-  image        String?
-  password     String
-  score        Int             @default(0)
-  isActive     Boolean         @default(true)
-  isAdmin      Boolean         @default(false)
-  isSuperAdmin Boolean         @default(false)
-  Question     Question[]
-  Answer       Answer[]
-  QuesComment  QuesComment[]
-  AnsComment   AnsComment[]
-  ResetToken   ResetToken[]
-  QLikes       QuestionLikes[]
+  id            String         @id @default(cuid())
+  username      String         @unique
+  email         String?        @unique
+  firstName     String?
+  lastName      String?
+  image         String?
+  password      String
+  score         Int            @default(0)
+  isActive      Boolean        @default(true)
+  isAdmin       Boolean        @default(false)
+  isSuperAdmin  Boolean        @default(false)
+  Question      Question[]
+  Answer        Answer[]
+  QuesComment   QuesComment[]
+  AnsComment    AnsComment[]
+  ResetToken    ResetToken[]
+  QuestionLikes QuestionLike[]
+  AnswerLike    AnswerLike[]
 }
 
 model Question {
-  id      String          @id @default(cuid())
+  id      String         @id @default(cuid())
   body    String
-  votes   Int             @default(0)
+  votes   Int            @default(0)
   userId  String
-  user    User            @relation(fields: [userId], references: [id])
+  user    User           @relation(fields: [userId], references: [id])
   answer  Answer[]
   comment QuesComment[]
-  Likes   QuestionLikes[]
+  Likes   QuestionLike[]
 }
 
 model QuesComment {
@@ -56,6 +57,7 @@ model Answer {
   questionId String
   question   Question     @relation(fields: [questionId], references: [id])
   AnsComment AnsComment[]
+  AnswerLike AnswerLike[]
 }
 
 model AnsComment {
@@ -75,7 +77,7 @@ model ResetToken {
   userId    String
 }
 
-model QuestionLikes {
+model QuestionLike {
   id         String   @id @default(cuid())
   user       User     @relation(fields: [userId], references: [id])
   userId     String
@@ -87,6 +89,22 @@ model QuestionLikes {
 }
 
 enum Type {
+  like
+  dislike
+}
+
+model AnswerLike {
+  id       String     @id @default(cuid())
+  user     User       @relation(fields: [userId], references: [id])
+  userId   String
+  answer   Answer     @relation(fields: [answerId], references: [id])
+  answerId String
+  type     AnswerType
+
+  @@unique([userId, answerId])
+}
+
+enum AnswerType {
   like
   dislike
 }

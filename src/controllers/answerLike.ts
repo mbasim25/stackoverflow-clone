@@ -1,20 +1,20 @@
 import { Request, Response } from "express";
 import * as validators from "../utils";
-import { User } from "../types/";
+import { User, AnswerLike } from "../types";
 import { prisma } from "../server";
-import { QuestionLikes } from ".prisma/client";
 
 class Controller {
   create = async (req: Request, res: Response) => {
     try {
-      const data: QuestionLikes =
-        await validators.qv.questionLike.validateAsync(req.body);
+      const data: AnswerLike = await validators.av.answerLike.validateAsync(
+        req.body
+      );
       const user: User = req.user;
 
-      const like = await prisma.questionLikes.create({
+      const like = await prisma.answerLike.create({
         data: {
           userId: user.id,
-          questionId: data.questionId,
+          answerId: data.answerId,
           type: data.type,
         },
       });
@@ -30,7 +30,7 @@ class Controller {
       const user: User = req.user;
       const id = req.params.id;
 
-      const like = await prisma.questionLikes.findUnique({
+      const like = await prisma.answerLike.findUnique({
         where: {
           id: id,
         },
@@ -41,10 +41,10 @@ class Controller {
       } else if (like.userId !== user.id && !user.isAdmin) {
         return res.status(403).send("unauthorized access");
       }
-      const data: QuestionLikes =
+      const data: AnswerLike =
         await validators.qv.questionLikeUpdate.validateAsync(req.body);
 
-      const updated = await prisma.questionLikes.update({
+      const updated = await prisma.answerLike.update({
         where: {
           id: like.id,
         },
@@ -64,7 +64,7 @@ class Controller {
       const user: User = req.user;
       const id = req.params.id;
 
-      const like = await prisma.questionLikes.findUnique({
+      const like = await prisma.answerLike.findUnique({
         where: {
           id: id,
         },
@@ -76,7 +76,7 @@ class Controller {
         return res.status(403).send("unauthorized access");
       }
 
-      await prisma.questionLikes.delete({
+      await prisma.answerLike.delete({
         where: {
           id: like.id,
         },
