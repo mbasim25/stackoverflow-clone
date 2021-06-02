@@ -21,17 +21,15 @@ class Controller {
       });
 
       let score = 0;
-      const num = likes.forEach((like) => {
-        console.log(like.type);
-        if (like.type == "like") {
-          score + 1;
+      for (const like of likes) {
+        if (like.type === "like") {
+          score += 1;
         } else {
-          score - 1;
+          score -= 1;
         }
-      });
-      console.log(score);
+      }
 
-      return res.status(200).send({ question });
+      return res.status(200).send({ question, score });
     } catch (e) {
       return res.status(400).send();
     }
