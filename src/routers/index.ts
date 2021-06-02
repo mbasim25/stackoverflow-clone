@@ -4,6 +4,7 @@ import users from "./users";
 import accounts from "./accounts";
 import questions from "./questions";
 import answers from "./answers";
+import questionLike from "./questionLike";
 
 export default {
   core,
@@ -12,4 +13,5 @@ export default {
   accounts,
   questions,
   answers,
+  questionLike,
 };
