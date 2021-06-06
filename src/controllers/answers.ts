@@ -4,6 +4,37 @@ import { Answer, User } from "../types/";
 import { prisma } from "../server";
 
 class Controller {
+  retrieve = async (req: Request, res: Response) => {
+    try {
+      const id = req.params.id;
+
+      const answer = await prisma.answer.findUnique({
+        where: {
+          id: id,
+        },
+      });
+
+      const likes = await prisma.answerLikes.findMany({
+        where: {
+          answerId: id,
+        },
+      });
+
+      let score = 0;
+      for (const like of likes) {
+        if (like.type === "like") {
+          score += 1;
+        } else {
+          score -= 1;
+        }
+      }
+
+      return res.status(200).send({ answer, score });
+    } catch (e) {
+      return res.status(400).send();
+    }
+  };
+
   list = async (req: Request, res: Response) => {
     try {
       const user: User = req.user;
