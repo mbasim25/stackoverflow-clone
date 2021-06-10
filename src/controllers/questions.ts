@@ -14,7 +14,7 @@ class Controller {
         },
       });
 
-      const likes = await prisma.questionLikes.findMany({
+      const likes = await prisma.questionLike.findMany({
         where: {
           questionId: id,
         },
