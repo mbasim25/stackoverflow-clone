@@ -5,7 +5,7 @@ import S3 from "aws-sdk/clients/s3";
 // AWS S3 intgration for images
 
 const bucketName = secrets.AWS_BUCKET_NAME;
-const region = "eu-west-2";
+const region = "us-east-2";
 const accessKeyId = secrets.AWS_ACCESS_KEY;
 const secretAccessKey = secrets.AWS_SECRET_ACCESS_KEY;
 
