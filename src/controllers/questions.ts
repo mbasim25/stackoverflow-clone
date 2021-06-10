@@ -4,7 +4,7 @@ import { Question, User } from "../types/";
 import { prisma } from "../server";
 
 class Controller {
-  instance = async (req: Request, res: Response) => {
+  retrieve = async (req: Request, res: Response) => {
     try {
       const id = req.params.id;
 
