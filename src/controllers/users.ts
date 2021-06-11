@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import * as validators from "../utils/validators";
+import * as validators from "../validators/validators";
 import { User } from "../types";
 import { prisma } from "../server";
 import util from "util";

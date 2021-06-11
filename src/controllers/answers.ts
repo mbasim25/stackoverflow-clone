@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import * as validators from "../utils";
+import * as validators from "../validators";
 import { Answer, User } from "../types/";
 import { prisma } from "../server";
 
@@ -55,9 +55,8 @@ class Controller {
 
   create = async (req: Request, res: Response) => {
     try {
-      const data: Answer = await validators.av.createAnswer.validateAsync(
-        req.body
-      );
+      const data: Answer =
+        await validators.answervalidator.createAnswer.validateAsync(req.body);
       const user: User = req.user;
 
       const answer = await prisma.answer.create({
@@ -87,9 +86,8 @@ class Controller {
         return res.status(403).send("unauthorized access");
       }
 
-      const data: Answer = await validators.av.updateAnswer.validateAsync(
-        req.body
-      );
+      const data: Answer =
+        await validators.answervalidator.updateAnswer.validateAsync(req.body);
 
       const updated = await prisma.answer.update({
         where: {
