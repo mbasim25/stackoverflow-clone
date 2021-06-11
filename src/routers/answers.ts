@@ -12,6 +12,9 @@ router.use(passport.authenticate("jwt", { session: false }));
 // Get a list of answers
 router.get("", controller.list);
 
+// get a question
+router.get("/:id", controller.retrieve);
+
 // create an answer
 router.post("/", controller.create);
 

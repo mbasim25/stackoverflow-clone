@@ -9,16 +9,13 @@ router.use(passport.authenticate("jwt", { session: false }));
 
 //CRUD
 
-// Get a list of questions
-// router.get("", controller.list);
-
-// create a question
+// create an answer like
 router.post("/", controller.create);
 
-// Update a question if owner or an admin
+// Update an answer like
 router.patch("/:id", controller.update);
 
-// Delete a question if owner or an admin
+// Delete an answer like
 router.delete("/:id", controller.destroy);
 
 export default router;

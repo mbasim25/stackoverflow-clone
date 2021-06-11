@@ -13,7 +13,7 @@ router.use(passport.authenticate("jwt", { session: false }));
 router.get("", controller.list);
 
 // get a question
-router.get("/:id", controller.instance);
+router.get("/:id", controller.retrieve);
 
 // create a question
 router.post("/", controller.create);
