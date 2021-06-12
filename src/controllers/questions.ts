@@ -99,7 +99,7 @@ class Controller {
 
       const updated = await prisma.question.update({
         where: {
-          id: question.id,
+          id: id,
         },
         data: {
           body: data.body,

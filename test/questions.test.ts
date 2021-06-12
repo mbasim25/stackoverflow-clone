@@ -3,16 +3,16 @@ import server, { prisma } from "../src/server";
 import jwt from "jsonwebtoken";
 import { secrets } from "../src/utils";
 import bcrypt from "bcrypt";
+import users from "../src/controllers/users";
 
 describe("Test Questions CRUD", () => {
   let res: Response;
   const request = baseRequest(server);
 
   const login = async () => {
-    await request
+    res = await request
       .post("/accounts/login")
-      .send({ username: "user1", password: "123456" });
-    // console.log(res.body.token);
+      .send({ username: "m123456", password: "m123456" });
     return res.body.token;
   };
 
@@ -23,21 +23,17 @@ describe("Test Questions CRUD", () => {
   });
 
   beforeEach(async () => {
-    const user = request.post("/accounts/register").send({
-      username: "user1",
-      password: await bcrypt.hash("123456", 12),
-      email: "m@gmail.com",
-    });
-    console.log((await user).body);
-    const question1 = await prisma.question.create({
+    const user = await prisma.user.create({
       data: {
-        userId: "123",
-        body: "firstquestion",
+        username: "m123456",
+        password: await bcrypt.hash("m123456", 12),
+        email: "m@gmail.com",
       },
     });
   });
 
   afterEach(async () => {
+    await prisma.$executeRaw('TRUNCATE "User" CASCADE;');
     await prisma.$executeRaw('TRUNCATE "Question" CASCADE;');
   });
 
@@ -49,71 +45,132 @@ describe("Test Questions CRUD", () => {
       .set("Authorization", `Bearer ${token}`);
 
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty("body");
-    expect(res.body).toHaveProperty("userId");
+
+    const user = await prisma.user.findUnique({
+      where: {
+        username: "m123456",
+      },
+    });
+
+    await prisma.question.create({
+      data: {
+        userId: user.id,
+        body: "newQ",
+      },
+    });
 
     // * Retrieve
-    const firstquestion = await prisma.question.findFirst({
-      where: { body: "firstquestion" },
+    const question = await prisma.question.findFirst({
+      where: { body: "newQ" },
     });
-    res = await request.get("/questions").query({ id: firstquestion.id });
+
+    res = await request
+      .get(`/questions/${question.id}`)
+      .set("Authorization", `Bearer ${token}`);
 
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty("body");
-    expect(res.body).toHaveProperty("userId");
+    expect(res.body).toHaveProperty("question");
+    expect(res.body).toHaveProperty("score");
+    expect(res.body.question).toHaveProperty("body");
+    expect(res.body.question).toHaveProperty("userId");
   });
 
   test("Test Question CREATE.", async () => {
+    // *  find user
+    const user = await prisma.user.findUnique({
+      where: {
+        username: "m123456",
+      },
+    });
+    const token = await login();
     // * Create question
     res = await request
       .post("/questions")
-      .send({ userId: "123", body: "question" });
+      .set("Authorization", `Bearer ${token}`)
+      .send({ userId: user.id, body: "question" });
 
     expect(res.status).toBe(201);
-    expect(await prisma.question.count()).toBe(2);
+    expect(res.body).toHaveProperty("userId");
+    expect(res.body).toHaveProperty("id");
+    expect(res.body).toHaveProperty("body");
+
+    expect(await prisma.question.count()).toBe(1);
   });
 
   test("Test Question UPDATE.", async () => {
-    // * update Question
-    const question = await prisma.question.findFirst({
-      where: { body: "firstquestion" },
+    // *  find user
+    const user = await prisma.user.findUnique({
+      where: {
+        username: "m123456",
+      },
+    });
+    const token = await login();
+
+    const newQ = await prisma.question.create({
+      data: {
+        userId: user.id,
+        body: "newQ",
+      },
     });
 
+    // * find Question
+    const question = await prisma.question.findFirst({
+      where: { body: "newQ" },
+    });
+
+    // * update Question
     res = await request
       .patch(`/questions/${question.id}`)
+      .set("Authorization", `Bearer ${token}`)
       .send({ body: "anything" });
 
-    expect(res.body.body).toEqual("anything");
+    expect(res.status).toBe(200);
 
+    // checking
     const updated = await prisma.question.findFirst();
-
     expect(updated.body).toEqual("anything");
 
     // * update a question that doesn't exist
-    res = await request.patch(`/questions/${1232}`).send({ body: "Something" });
+    res = await request
+      .patch(`/questions/${1232}`)
+      .set("Authorization", `Bearer ${token}`)
+      .send({ body: "Something" });
     expect(res.status).toBe(404);
   });
 
   test("Test Question DESTROY.", async () => {
+    // *  find user
+    const user = await prisma.user.findUnique({
+      where: {
+        username: "m123456",
+      },
+    });
+    const token = await login();
+
     // * Create question
     res = await request
       .post("/questions")
-      .send({ body: "something", userId: "1232" });
+      .set("Authorization", `Bearer ${token}`)
+      .send({ body: "something", userId: user.id });
 
     expect(res.status).toBe(201);
-    expect(await prisma.question.count()).toBe(2);
+    expect(await prisma.question.count()).toBe(1);
 
     const question = await prisma.question.findFirst({
       where: { body: "something" },
     });
 
-    res = await request.delete(`/questions/${question.id}`);
+    res = await request
+      .delete(`/questions/${question.id}`)
+      .set("Authorization", `Bearer ${token}`);
     expect(res.status).toBe(204);
-    expect(await prisma.question.count()).toBe(1);
+    expect(await prisma.question.count()).toBe(0);
 
-    // * Delete a category that doesn't exists
-    res = await request.delete(`/questions/${123}`);
+    // * Delete a question that doesn't exists
+    res = await request
+      .delete(`/questions/${123}`)
+      .set("Authorization", `Bearer ${token}`);
     expect(res.status).toBe(404);
-    expect(await prisma.question.count()).toBe(1);
+    expect(await prisma.question.count()).toBe(0);
   });
 });
