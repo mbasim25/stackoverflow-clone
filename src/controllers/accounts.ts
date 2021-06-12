@@ -3,19 +3,11 @@ import bcrypt from "bcrypt";
 import * as validators from "../validators/validators";
 import { prisma } from "../server";
 import jwt from "jsonwebtoken";
-import { secrets } from "../utils";
-import {
-  User,
-  PassChange,
-  PassReset,
-  EmailPassReset,
-  ResetToken,
-} from "../types";
+import { secrets, s3, mail } from "../utils";
+import { User, PassChange, PassReset, EmailPassReset } from "../types";
 import fs from "fs";
-import { uploadFile } from "../utils/s3";
-import { transporter } from "../utils/mail";
+
 import util from "util";
-import { DataSync } from "aws-sdk";
 
 const unlinkFile = util.promisify(fs.unlink);
 
@@ -29,7 +21,7 @@ class Controller {
 
       if (req.file) {
         const file = req.file;
-        result = (await uploadFile(file)).Location;
+        result = (await s3.uploadFile(file)).Location;
         await unlinkFile(file.path);
       }
 
@@ -141,7 +133,7 @@ class Controller {
   super = async (req: Request, res: Response) => {
     try {
       req.body.password = await bcrypt.hash(req.body.password, 12);
-      const sa = await prisma.user.create({
+      const superadmin = await prisma.user.create({
         data: {
           username: req.body.username,
           email: req.body.email,
@@ -151,11 +143,12 @@ class Controller {
           isActive: true,
         },
       });
-      return res.status(200).send(sa);
+      return res.status(200).send(superadmin);
     } catch (e) {
-      res.send(e);
+      res.send();
     }
   };
+
   passwordchange = async (req: Request, res: Response) => {
     try {
       const requester: User = req.user;
@@ -195,11 +188,15 @@ class Controller {
 
   updateAccount = async (req: Request, res: Response) => {
     try {
-      const file = req.file;
       const data: User = await validators.updateAccount.validateAsync(req.body);
 
-      const result = await uploadFile(file);
-      await unlinkFile(file.path);
+      let result = data.image;
+
+      if (req.file) {
+        const file = req.file;
+        result = (await s3.uploadFile(file)).Location;
+        await unlinkFile(file.path);
+      }
 
       const requester: User = req.user;
 
@@ -218,16 +215,13 @@ class Controller {
       const updated: User = await prisma.user.update({
         where: { id: requester.id },
         data: {
-          username: data.username,
-          password: data.password,
-          image: result.Location,
-          email: data.email,
+          ...data,
+          image: result,
         },
       });
 
       return res.status(200).send(updated);
     } catch (e) {
-      console.log(e);
       return res.status(400).send();
     }
   };
@@ -266,7 +260,7 @@ class Controller {
         },
       });
 
-      transporter.sendMail(options, (error: any, success: any) => {
+      mail.transporter.sendMail(options, (error: any, success: any) => {
         if (error) {
           return res.status(400).send("error sending the email");
         }

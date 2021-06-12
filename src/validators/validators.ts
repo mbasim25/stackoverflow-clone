@@ -60,6 +60,7 @@ export const login = joi.object<User>({
 export const updateAccount = joi.object<User>({
   username: Joi.string().min(2).max(32),
   email: Joi.string().min(6),
+  image: Joi.string().allow(null),
   firstName: Joi.string().allow(null),
   lastName: Joi.string().allow(null),
 });
