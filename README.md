@@ -1,6 +1,6 @@
 # StackOverflow-clone
 
-main node-starter used in this project is made by Ali Mehasin and can be found [here]. 
+Starter template used in this project is made by Ali Mehasin and can be found [here]. 
 
 ## Guidelines
 
