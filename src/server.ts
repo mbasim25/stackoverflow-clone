@@ -14,4 +14,5 @@ server.listen(secrets.PORT, () => {
   console.log(`💻 App listening on port http://localhost:${secrets.PORT}`);
 });
 
+export default server;
 export { prisma };

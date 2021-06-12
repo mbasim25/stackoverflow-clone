@@ -4,7 +4,7 @@
     "dev": "nodemon src/server.ts",
     "start": "node dist/server.js",
     "build": "tsc",
-    "test": "jest"
+    "test": "jest --maxWorkers=1"
   },
   "dependencies": {
     "@prisma/client": "^2.23.0",

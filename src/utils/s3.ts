@@ -17,15 +17,17 @@ const s3 = new S3({
 
 // uploads a file to s3
 export function uploadFile(file: Express.Multer.File) {
-  const fileStream = fs.createReadStream(file.path);
+  if (file) {
+    const fileStream = fs.createReadStream(file.path);
 
-  const uploadParams = {
-    Bucket: bucketName,
-    Body: fileStream,
-    Key: file.filename,
-    ContentType: file.mimetype,
-    ACL: "public-read",
-  };
+    const uploadParams = {
+      Bucket: bucketName,
+      Body: fileStream,
+      Key: file.filename,
+      ContentType: file.mimetype,
+      ACL: "public-read",
+    };
 
-  return s3.upload(uploadParams).promise();
+    return s3.upload(uploadParams).promise();
+  }
 }

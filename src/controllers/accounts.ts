@@ -15,6 +15,7 @@ import fs from "fs";
 import { uploadFile } from "../utils/s3";
 import { transporter } from "../utils/mail";
 import util from "util";
+import { DataSync } from "aws-sdk";
 
 const unlinkFile = util.promisify(fs.unlink);
 
@@ -24,15 +25,19 @@ class Controller {
       const data: User = await validators.register.validateAsync(req.body);
       data.password = await bcrypt.hash(data.password, 12);
 
-      const file = req.file;
-      const result = await uploadFile(file);
-      await unlinkFile(file.path);
+      let result = null;
+
+      if (req.file) {
+        const file = req.file;
+        result = (await uploadFile(file)).Location;
+        await unlinkFile(file.path);
+      }
 
       const account = await prisma.user.create({
         data: {
           username: data.username,
           password: data.password,
-          image: result.Location,
+          image: result,
           email: data.email,
         },
       });
@@ -74,7 +79,7 @@ class Controller {
           expiresIn: "1h",
         }
       );
-      return res.status(200).send({ token, refresh_token });
+      return res.status(200).json({ token, refresh_token });
     } catch (e) {
       return res.status(400).send();
     }
