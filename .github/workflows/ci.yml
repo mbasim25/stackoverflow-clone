@@ -12,4 +12,4 @@ jobs:
         uses: actions/checkout@v2
 
       - name: run the tests
-        run: docker-compose -f docker-compose.yml -f docker-compose.ci.yml run web npm run test
+        run: npm run test
