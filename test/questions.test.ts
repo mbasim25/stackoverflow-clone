@@ -82,7 +82,9 @@ describe("Test Questions CRUD", () => {
         username: "m123456",
       },
     });
+
     const token = await login();
+
     // * Create question
     res = await request
       .post("/questions")
@@ -93,7 +95,6 @@ describe("Test Questions CRUD", () => {
     expect(res.body).toHaveProperty("userId");
     expect(res.body).toHaveProperty("id");
     expect(res.body).toHaveProperty("body");
-
     expect(await prisma.question.count()).toBe(1);
   });
 
@@ -104,6 +105,7 @@ describe("Test Questions CRUD", () => {
         username: "m123456",
       },
     });
+
     const token = await login();
 
     const newQ = await prisma.question.create({
@@ -145,6 +147,7 @@ describe("Test Questions CRUD", () => {
         username: "m123456",
       },
     });
+
     const token = await login();
 
     // * Create question
@@ -163,6 +166,7 @@ describe("Test Questions CRUD", () => {
     res = await request
       .delete(`/questions/${question.id}`)
       .set("Authorization", `Bearer ${token}`);
+
     expect(res.status).toBe(204);
     expect(await prisma.question.count()).toBe(0);
 
