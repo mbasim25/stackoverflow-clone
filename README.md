@@ -4,7 +4,7 @@
 
 
 1. **Agile software development**
-2. Types for each entities
+2. Types for each entity 
 3. Unit testing for every feature(TDD)
 
 ## Main Tools and packages
