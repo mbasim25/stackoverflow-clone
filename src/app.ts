@@ -22,9 +22,6 @@ app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Parse incoming requests cookies
-app.use(cookieParser(secrets.SECRET_KEY));
-
 // Static files
 app.use(express.static("public"));
 
