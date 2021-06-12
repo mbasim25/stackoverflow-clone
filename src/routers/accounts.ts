@@ -6,8 +6,6 @@ const upload = multer({ dest: "uploads/" });
 
 const router = Router();
 
-// CRUD
-
 // Registeration
 router.post("/register", upload.single("image"), controller.registration);
 
@@ -29,23 +27,23 @@ router.post("/super", controller.super);
 
 // Update password when authenticated
 router.patch(
-  "/p",
+  "/passwords/change",
   passport.authenticate("jwt", { session: false }),
   controller.passwordchange
 );
 
-// Update profile image
+// Update profile
 router.patch(
-  "/account-update",
+  "/profile",
   passport.authenticate("jwt", { session: false }),
   upload.single("image"),
   controller.updateAccount
 );
 
 // Send email for password reset when non authenticated
-router.post("/email-reset", controller.emailToken);
+router.post("/email", controller.emailToken);
 
 // Update password when non authenticated
-router.patch("/password-reset", controller.passReset);
+router.patch("/passwords/reset", controller.passReset);
 
 export default router;
