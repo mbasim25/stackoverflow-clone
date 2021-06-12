@@ -1,7 +1,8 @@
 # StackOverflow-clone
 
-## Guideline
+Starter template used in this project is made by Ali Mehasin and can be found [here]. 
 
+## Guidelines
 
 1. **Agile software development**
 2. Types for each entity 
@@ -29,3 +30,5 @@
 - There will be 3 types of users (user, admin, superadmin) with different permissions
 - Password Reset via email using Nodemailer and an auto generated OTP
 - Validation for each request using joi
+
+[here]: https://github.com/alimehasin/node-starter
