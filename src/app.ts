@@ -1,5 +1,4 @@
 import express, { Application } from "express";
-import cookieParser from "cookie-parser";
 import errorHandler from "errorhandler";
 import compression from "compression";
 import helmet from "helmet";
@@ -8,7 +7,7 @@ import passport from "passport";
 import routers from "./routers";
 import { secrets } from "./utils";
 import { JWTStrategy } from "./utils/passport";
-
+import serverless from "serverless-http";
 // Initialize the application
 const app: Application = express();
 
@@ -33,13 +32,17 @@ app.use(logger);
 app.use(passport.initialize());
 passport.use("jwt", JWTStrategy);
 
+const router = express.Router();
 // Routers
-app.use("/users", routers.users);
-app.use("/accounts", routers.accounts);
-app.use("/questions", routers.questions);
-app.use("/answers", routers.answers);
-app.use("/question/likes", routers.questionLike);
+router.use("/users", routers.users);
+router.use("/accounts", routers.accounts);
+router.use("/questions", routers.questions);
+router.use("/answers", routers.answers);
+router.use("/question/likes", routers.questionLike);
 
+app.use("./netlify/functions/api", router);
+
+exports.handler = serverless(app);
 // Error handler
 if (secrets.NODE_ENV === "development") {
   app.use(errorHandler());
