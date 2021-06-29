@@ -39,7 +39,7 @@ class Controller {
     try {
       const skip = req.params.skip;
       const take = req.params.take;
-      const user: User = req.user;
+      const user: any = req.user;
 
       const questions = await prisma.question.findMany({
         skip: parseInt(skip) || 0,
@@ -61,7 +61,7 @@ class Controller {
         await validators.questionvalidator.createQuestion.validateAsync(
           req.body
         );
-      const user: User = req.user;
+      const user: any = req.user;
 
       const question = await prisma.question.create({
         data: {
@@ -78,7 +78,7 @@ class Controller {
 
   update = async (req: Request, res: Response) => {
     try {
-      const user: User = req.user;
+      const user: any = req.user;
       const id = req.params.id;
 
       const question = await prisma.question.findUnique({
@@ -114,7 +114,7 @@ class Controller {
 
   destroy = async (req: Request, res: Response) => {
     try {
-      const user: User = req.user;
+      const user: any = req.user;
       const id = req.params.id;
 
       const question = await prisma.question.findUnique({

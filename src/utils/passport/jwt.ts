@@ -10,7 +10,7 @@ import { User } from "../../types";
 
 // JWT integration for token authentication
 
-const options: StrategyOptions = {
+const options = {
   secretOrKey: SECRET_KEY,
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 };

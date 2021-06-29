@@ -2,12 +2,14 @@
   "version": "0.1.0",
   "scripts": {
     "dev": "nodemon src/server.ts",
-    "start": "./node_modules/.bin/netlify-lambda serve src",
-    "build": "./node_modules/.bin/netlify-lambda build src",
+    "start": "node dist/server.js",
+    "postinstall": "tsc",
+    "deploy": "git add . && git commit -m/sprint1 Heroku && git push heroku master",
     "test": "jest --maxWorkers=1"
   },
   "dependencies": {
     "@prisma/client": "^2.23.0",
+    "@types/uuid": "^8.3.0",
     "aws-sdk": "^2.913.0",
     "bcrypt": "^5.0.1",
     "compression": "^1.7.4",
@@ -24,7 +26,8 @@
     "nodemailer": "^6.6.1",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
-    "serverless-http": "^2.7.0"
+    "serverless-http": "^2.7.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",

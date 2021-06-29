@@ -1,13 +1,12 @@
 import { Router } from "express";
 import controller from "../controllers/accounts";
 import passport from "passport";
-import multer from "multer";
-const upload = multer({ dest: "uploads/" });
+import { uploads } from "../utils";
 
 const router = Router();
 
 // Registeration
-router.post("/register", upload.single("image"), controller.registration);
+router.post("/register", uploads.userImage, controller.registration);
 
 // Login
 router.post("/login", controller.login);
@@ -36,7 +35,7 @@ router.patch(
 router.patch(
   "/profile",
   passport.authenticate("jwt", { session: false }),
-  upload.single("image"),
+  uploads.userImage,
   controller.updateAccount
 );
 

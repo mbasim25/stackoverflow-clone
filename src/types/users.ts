@@ -1,16 +1,6 @@
-export interface User {
-  id?: string;
-  username?: string;
-  email?: string;
-  firstName?: string;
-  lastName?: string;
-  image?: string;
-  password?: string;
-  isActive?: boolean;
-  isAdmin?: boolean;
-  isSuperAdmin?: boolean;
-  score?: number;
-}
+import { User as BaseUser } from ".prisma/client";
+
+export interface User extends BaseUser {}
 
 // Password update when authenticated and the old password is known
 export interface PassChange {

@@ -3,40 +3,19 @@ import bcrypt from "bcrypt";
 import * as validators from "../validators/validators";
 import { prisma } from "../server";
 import jwt from "jsonwebtoken";
-import { secrets, s3, mail } from "../utils";
+import { secrets, mail } from "../utils";
 import { User, PassChange, PassReset, EmailPassReset } from "../types";
-import fs from "fs";
-
-import util from "util";
-
-const unlinkFile = util.promisify(fs.unlink);
 
 class Controller {
   registration = async (req: Request, res: Response) => {
     try {
-      const data: User = await validators.register.validateAsync(req.body);
-      data.password = await bcrypt.hash(data.password, 12);
+      const data = await validators.register(req);
 
-      let result = null;
+      const user = await prisma.user.create({ data: { ...data } });
 
-      if (req.file) {
-        const file = req.file;
-        result = (await s3.uploadFile(file)).Location;
-        await unlinkFile(file.path);
-      }
-
-      const account = await prisma.user.create({
-        data: {
-          username: data.username,
-          password: data.password,
-          image: result,
-          email: data.email,
-        },
-      });
-      delete account.password;
-      return res.status(201).send(account);
+      delete data.password;
+      return res.status(201).send(user);
     } catch (e) {
-      console.log(e);
       return res.status(400).send(e);
     }
   };
@@ -117,7 +96,7 @@ class Controller {
 
   profile = async (req: Request, res: Response) => {
     try {
-      const requester: User = req.user;
+      const requester: any = req.user;
       const profile = await prisma.user.findUnique({
         where: { id: requester.id },
       });
@@ -151,7 +130,7 @@ class Controller {
 
   passwordchange = async (req: Request, res: Response) => {
     try {
-      const requester: User = req.user;
+      const requester: any = req.user;
 
       const user: User = await prisma.user.findUnique({
         where: {
@@ -190,15 +169,7 @@ class Controller {
     try {
       const data: User = await validators.updateAccount.validateAsync(req.body);
 
-      let result = data.image;
-
-      if (req.file) {
-        const file = req.file;
-        result = (await s3.uploadFile(file)).Location;
-        await unlinkFile(file.path);
-      }
-
-      const requester: User = req.user;
+      const requester: any = req.user;
 
       const user = await prisma.user.findUnique({
         where: {
@@ -216,7 +187,6 @@ class Controller {
         where: { id: requester.id },
         data: {
           ...data,
-          image: result,
         },
       });
 

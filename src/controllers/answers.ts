@@ -37,7 +37,7 @@ class Controller {
 
   list = async (req: Request, res: Response) => {
     try {
-      const user: User = req.user;
+      const user: any = req.user;
       const skip = req.params.skip;
       const take = req.params.take;
 
@@ -57,7 +57,7 @@ class Controller {
     try {
       const data: Answer =
         await validators.answervalidator.createAnswer.validateAsync(req.body);
-      const user: User = req.user;
+      const user: any = req.user;
 
       const answer = await prisma.answer.create({
         data: { body: data.body, userId: user.id, questionId: data.questionId },
@@ -71,7 +71,7 @@ class Controller {
 
   update = async (req: Request, res: Response) => {
     try {
-      const user: User = req.user;
+      const user: any = req.user;
       const id = req.params.id;
 
       const answer = await prisma.answer.findUnique({
@@ -106,7 +106,7 @@ class Controller {
 
   destroy = async (req: Request, res: Response) => {
     try {
-      const user: User = req.user;
+      const user: any = req.user;
       const id = req.params.id;
 
       const answer = await prisma.answer.findUnique({

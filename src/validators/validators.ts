@@ -1,10 +1,33 @@
+import { Request } from "express";
 import Joi from "joi";
 import joi from "joi";
+import bcrypt from "bcrypt";
 import { User, PassChange, EmailPassReset, PassReset } from "../types";
 
 // User Validation
 // user = created by super admin
 // account = a normal user
+
+const base = {
+  firstName: Joi.string().allow(null),
+  lastName: Joi.string().allow(null),
+  image: Joi.string().allow(null),
+  password: Joi.string().min(6).required(),
+};
+
+const imageField = (req: Request, data: User): User => {
+  if (!req.files) {
+    return data;
+  }
+
+  const files: any = req.files;
+
+  if (files.image) {
+    data.image = files.image[0].location;
+  }
+
+  return data;
+};
 
 export const createUser = joi.object<User>({
   username: Joi.string().min(2).max(32).required(),
@@ -43,14 +66,22 @@ export const superAdmin = joi.object<User>({
   score: Joi.number(),
 });
 
-export const register = joi.object<User>({
-  username: Joi.string().min(2).max(32).required(),
-  email: Joi.string().required(),
-  firstName: Joi.string().allow(null),
-  lastName: Joi.string().allow(null),
-  image: Joi.string().allow(null),
-  password: Joi.string().min(6).required(),
-});
+export const register = async (req: Request): Promise<User> => {
+  const all = Joi.object<User>({
+    ...base,
+    username: Joi.string().min(2).max(32).required(),
+    email: Joi.string().min(2).required(),
+    password: Joi.string().min(6).required(),
+  });
+  const data = await all.validateAsync(req.body);
+
+  data.password = await bcrypt.hash(data.password, 12);
+
+  // Set media fields
+  imageField(req, data);
+
+  return data;
+};
 
 export const login = joi.object<User>({
   username: Joi.string().min(2).max(32).required(),

@@ -8,7 +8,7 @@ class Controller {
     try {
       const data: AnswerLike =
         await validators.answervalidator.answerLike.validateAsync(req.body);
-      const user: User = req.user;
+      const user: any = req.user;
 
       const like = await prisma.answerLike.create({
         data: {
@@ -26,7 +26,7 @@ class Controller {
 
   update = async (req: Request, res: Response) => {
     try {
-      const user: User = req.user;
+      const user: any = req.user;
       const id = req.params.id;
 
       const like = await prisma.answerLike.findUnique({
@@ -62,7 +62,7 @@ class Controller {
 
   destroy = async (req: Request, res: Response) => {
     try {
-      const user: User = req.user;
+      const user: any = req.user;
       const id = req.params.id;
 
       const like = await prisma.answerLike.findUnique({
