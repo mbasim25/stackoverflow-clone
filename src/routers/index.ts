@@ -3,7 +3,7 @@ import accounts from "./accounts";
 import questions from "./questions";
 import answers from "./answers";
 import questionLike from "./questionLike";
-import answerLike from "./AnswerLike";
+import answerLike from "./answerLike";
 
 export default {
   users,
