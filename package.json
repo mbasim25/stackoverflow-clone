@@ -5,8 +5,8 @@
     "npm": "7.x"
   },
   "scripts": {
-    "start": "serve -s build",
-    "heroku-postbuild": "tsc",
+    "start": "node dist/server.js",
+    "build": "tsc",
     "deploy": "git add . && git commit -m/sprint1 Heroku && git push heroku master",
     "test": "jest --maxWorkers=1",
     "dev": "nodemon src/server.ts"
