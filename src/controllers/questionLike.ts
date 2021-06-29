@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import * as validators from "../validators";
-import { User } from "../types";
 import { prisma } from "../server";
 import { QuestionLike } from ".prisma/client";
 

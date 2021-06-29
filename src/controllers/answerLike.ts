@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import * as validators from "../validators";
-import { User, AnswerLike } from "../types";
+import { AnswerLike } from ".prisma/client";
 import { prisma } from "../server";
 
 class Controller {
