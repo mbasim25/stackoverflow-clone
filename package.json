@@ -1,5 +1,8 @@
 {
   "version": "0.1.0",
+  "engines": {
+    "node": "14.15.4"
+  },
   "scripts": {
     "dev": "nodemon src/server.ts",
     "start": "node dist/server.js",
