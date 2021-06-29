@@ -33,9 +33,6 @@ app.use(passport.initialize());
 passport.use("jwt", JWTStrategy);
 
 // Routers
-app.use("", (req, res) => {
-  res.status(200).json("hello");
-});
 app.use("/users", routers.users);
 app.use("/accounts", routers.accounts);
 app.use("/questions", routers.questions);
