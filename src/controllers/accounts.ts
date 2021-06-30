@@ -1,58 +1,66 @@
 import { Request, Response } from "express";
-import bcrypt from "bcrypt";
-import * as validators from "../validators/validators";
 import { prisma } from "../server";
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { secrets, mail } from "../utils";
+import * as validators from "../validators/validators";
 import { User, PassChange, PassReset, EmailPassReset } from "../types";
+import { secrets, mail } from "../utils";
 
 class Controller {
   registration = async (req: Request, res: Response) => {
     try {
+      // Validation
       const data = await validators.register(req);
 
-      const user = await prisma.user.create({ data: { ...data } });
+      // Register
+      const user = await prisma.user.create({ data });
 
-      delete data.password;
-      return res.status(201).send(user);
+      return res.status(201).json(await validators.reshape(user));
     } catch (e) {
-      return res.status(400).send(e);
+      return res.status(400).json();
     }
   };
 
   login = async (req: Request, res: Response) => {
     try {
-      const data: User = await validators.login.validateAsync(req.body);
-      const account = await prisma.user.findUnique({
+      // Validation
+      const data: User = await validators.login(req);
+
+      // Find user
+      const user = await prisma.user.findUnique({
         where: {
           username: data.username,
         },
       });
-      if (!account.isActive) {
+
+      // Security
+      if (!user.isActive) {
         return res
           .status(403)
           .send("this account was deactivated by moderators");
-      } else if (!(await bcrypt.compare(data.password, account.password))) {
+      } else if (!(await bcrypt.compare(data.password, user.password))) {
         return res.status(403).send("username or password were incorrect");
       }
 
+      // Tokens assignment
       const token = jwt.sign(
-        { id: account.id, type: "ACCESS" },
+        { id: user.id, type: "ACCESS" },
         secrets.SECRET_KEY,
-        {
-          expiresIn: "24h",
-        }
+        { expiresIn: "24h" }
       );
+
       const refresh_token = jwt.sign(
-        { id: account.id, type: "REFRESH" },
+        { id: user.id, type: "REFRESH" },
         secrets.SECRET_KEY,
-        {
-          expiresIn: "1h",
-        }
+        { expiresIn: "24h" }
       );
-      return res.status(200).json({ token, refresh_token });
+
+      // Remove extra fields
+      await validators.reshape(user);
+
+      return res.status(200).json({ token, refresh_token, user });
     } catch (e) {
-      return res.status(400).send();
+      return res.status(400).json();
     }
   };
 
@@ -88,9 +96,9 @@ class Controller {
         }
       );
 
-      return res.status(200).send({ token, refresh_token, user });
+      return res.status(200).json({ token, refresh_token });
     } catch (e) {
-      return res.status(400).send();
+      return res.status(400).json();
     }
   };
 

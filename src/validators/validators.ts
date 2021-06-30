@@ -5,9 +5,6 @@ import bcrypt from "bcrypt";
 import { User, PassChange, EmailPassReset, PassReset } from "../types";
 
 // User Validation
-// user = created by super admin
-// account = a normal user
-
 const base = {
   firstName: Joi.string().allow(null),
   lastName: Joi.string().allow(null),
@@ -27,6 +24,14 @@ const imageField = (req: Request, data: User): User => {
   }
 
   return data;
+};
+
+export const reshape = async (user: User) => {
+  delete user.isAdmin;
+  delete user.isSuperAdmin;
+  delete user.password;
+
+  return user;
 };
 
 export const createUser = joi.object<User>({
@@ -67,13 +72,13 @@ export const superAdmin = joi.object<User>({
 });
 
 export const register = async (req: Request): Promise<User> => {
-  const all = Joi.object<User>({
+  const schema = Joi.object<User>({
     ...base,
     username: Joi.string().min(2).max(32).required(),
     email: Joi.string().min(2).required(),
     password: Joi.string().min(6).required(),
   });
-  const data = await all.validateAsync(req.body);
+  const data = await schema.validateAsync(req.body);
 
   data.password = await bcrypt.hash(data.password, 12);
 
@@ -83,10 +88,14 @@ export const register = async (req: Request): Promise<User> => {
   return data;
 };
 
-export const login = joi.object<User>({
-  username: Joi.string().min(2).max(32).required(),
-  password: Joi.string().min(6).required(),
-});
+export const login = async (req: Request): Promise<User> => {
+  const schema = Joi.object<User>({
+    username: Joi.string().min(2).max(32).required(),
+    password: Joi.string().min(6).required(),
+  });
+
+  return await schema.validateAsync(req.body);
+};
 
 export const updateAccount = joi.object<User>({
   username: Joi.string().min(2).max(32),
