@@ -66,34 +66,30 @@ class Controller {
 
   refreshToken = async (req: Request, res: Response) => {
     try {
-      const refresh = jwt.decode(req.body.refreshToken, {
-        complete: true,
-      });
+      // Decode token
+      const refresh = jwt.decode(req.body.refreshToken, { complete: true });
+      const id = refresh.patload.id;
 
+      // Find user
       const user: User = await prisma.user.findUnique({
-        where: {
-          id: refresh.payload.id,
-        },
+        where: { id },
       });
 
       if (!user) {
-        return res.status(404).send("unable to refresh ur token ");
+        return res.status(404).send("User not found");
       }
 
+      // Assign tokens
       const token = jwt.sign(
         { id: user.id, type: "ACCESS" },
         secrets.SECRET_KEY,
-        {
-          expiresIn: "24h",
-        }
+        { expiresIn: "24h" }
       );
 
       const refresh_token = jwt.sign(
         { id: user.id, type: "REFRESH" },
         secrets.SECRET_KEY,
-        {
-          expiresIn: "1h",
-        }
+        { expiresIn: "24h" }
       );
 
       return res.status(200).json({ token, refresh_token });
@@ -105,15 +101,15 @@ class Controller {
   profile = async (req: Request, res: Response) => {
     try {
       const requester: any = req.user;
-      const profile = await prisma.user.findUnique({
+
+      // Find user
+      const user = await prisma.user.findUnique({
         where: { id: requester.id },
       });
 
-      delete profile.password;
-
-      return res.status(200).send(profile);
+      return res.status(200).json(await validators.reshape(user));
     } catch (e) {
-      return res.status(400).send();
+      return res.status(400).json();
     }
   };
 
