@@ -3,9 +3,9 @@ import { User as BaseUser } from ".prisma/client";
 export interface User extends BaseUser {}
 
 // Password update when authenticated and the old password is known
-export interface PassChange {
-  password?: string;
-  newPassword?: string;
+export interface PasswordChange {
+  old?: string;
+  new?: string;
 }
 
 // Sending email in case of a password reset

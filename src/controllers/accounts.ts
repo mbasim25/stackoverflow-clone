@@ -3,7 +3,7 @@ import { prisma } from "../server";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import * as validators from "../validators/validators";
-import { User, PassChange, PassReset, EmailPassReset } from "../types";
+import { User, PasswordChange, PassReset, EmailPassReset } from "../types";
 import { secrets, mail } from "../utils";
 
 class Controller {
@@ -113,6 +113,7 @@ class Controller {
     }
   };
 
+  // TODO: make super admin a seed data and not a controller
   super = async (req: Request, res: Response) => {
     try {
       req.body.password = await bcrypt.hash(req.body.password, 12);
@@ -132,40 +133,42 @@ class Controller {
     }
   };
 
-  passwordchange = async (req: Request, res: Response) => {
+  passwordChange = async (req: Request, res: Response) => {
     try {
       const requester: any = req.user;
+      const id = requester.id;
 
+      // Find user
       const user: User = await prisma.user.findUnique({
-        where: {
-          id: requester.id,
-        },
+        where: { id },
       });
 
-      const data: PassChange = await validators.passChange.validateAsync(
-        req.body
-      );
+      // Validation
+      const data: PasswordChange = await validators.passwordChange(req);
 
-      if (!(await bcrypt.compare(data.password, user.password))) {
-        return res.status(400).send("incorrect password");
-      } else if (data.password === data.newPassword) {
-        return res.status(400).send("new password cant be the old password");
+      // Security
+      if (!(await bcrypt.compare(data.old, user.password))) {
+        return res.status(400).json("incorrect password");
+      } else if (data.old === data.new) {
+        return res
+          .status(400)
+          .json("new password can't be the same as the old password");
       }
 
-      data.newPassword = await bcrypt.hash(data.newPassword, 12);
+      // Hash the new password
+      data.new = await bcrypt.hash(data.new, 12);
 
-      const account: User = await prisma.user.update({
-        where: {
-          id: requester.id,
-        },
+      // Update the user with the new password
+      await prisma.user.update({
+        where: { id: requester.id },
         data: {
-          password: data.newPassword,
+          password: data.new,
         },
       });
 
-      return res.status(200).send("password changed");
+      return res.status(200).json("password changed");
     } catch (e) {
-      return res.status(400).send();
+      return res.status(400).json();
     }
   };
 

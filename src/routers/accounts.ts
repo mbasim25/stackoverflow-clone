@@ -28,7 +28,7 @@ router.post("/super", controller.super);
 router.patch(
   "/passwords/change",
   passport.authenticate("jwt", { session: false }),
-  controller.passwordchange
+  controller.passwordChange
 );
 
 // Update profile

@@ -2,7 +2,7 @@ import { Request } from "express";
 import Joi from "joi";
 import joi from "joi";
 import bcrypt from "bcrypt";
-import { User, PassChange, EmailPassReset, PassReset } from "../types";
+import { User, PasswordChange, EmailPassReset, PassReset } from "../types";
 
 // User Validation
 const base = {
@@ -80,6 +80,7 @@ export const register = async (req: Request): Promise<User> => {
   });
   const data = await schema.validateAsync(req.body);
 
+  // Password hashing
   data.password = await bcrypt.hash(data.password, 12);
 
   // Set media fields
@@ -88,10 +89,21 @@ export const register = async (req: Request): Promise<User> => {
   return data;
 };
 
+// Login validator
 export const login = async (req: Request): Promise<User> => {
   const schema = Joi.object<User>({
     username: Joi.string().min(2).max(32).required(),
     password: Joi.string().min(6).required(),
+  });
+
+  return await schema.validateAsync(req.body);
+};
+
+// Password update when authenticated and the old password is known
+export const passwordChange = async (req: Request): Promise<PasswordChange> => {
+  const schema = Joi.object<PasswordChange>({
+    old: Joi.string().required(),
+    new: Joi.string().required(),
   });
 
   return await schema.validateAsync(req.body);
@@ -103,12 +115,6 @@ export const updateAccount = joi.object<User>({
   image: Joi.string().allow(null),
   firstName: Joi.string().allow(null),
   lastName: Joi.string().allow(null),
-});
-
-// Password update when authenticated and the old password is known
-export const passChange = joi.object<PassChange>({
-  password: Joi.string().required(),
-  newPassword: Joi.string().required(),
 });
 
 // Sending email in case of a password reset
