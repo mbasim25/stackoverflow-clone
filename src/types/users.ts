@@ -9,15 +9,14 @@ export interface PasswordChange {
 }
 
 // Sending email in case of a password reset
-export interface EmailPassReset {
+export interface ResetEmail {
   email?: string;
 }
 
 // Password reset when the user in not authenticated and old password is forgotten
-export interface PassReset {
+export interface ResetConfirm {
   uniqueKey?: string;
   email?: string;
-  userId?: string;
   password?: string;
 }
 

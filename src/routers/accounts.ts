@@ -40,9 +40,9 @@ router.patch(
 );
 
 // Send email for password reset when non authenticated
-router.post("/email", controller.emailToken);
+router.post("passwords/email", controller.resetEmail);
 
 // Update password when non authenticated
-router.patch("/passwords/reset", controller.passReset);
+router.patch("/passwords/reset", controller.resetConfirm);
 
 export default router;

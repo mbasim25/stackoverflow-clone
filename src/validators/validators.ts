@@ -2,14 +2,13 @@ import { Request } from "express";
 import Joi from "joi";
 import joi from "joi";
 import bcrypt from "bcrypt";
-import { User, PasswordChange, EmailPassReset, PassReset } from "../types";
+import { User, PasswordChange, ResetEmail, ResetConfirm } from "../types";
 
 // User Validation
 const base = {
   firstName: Joi.string().allow(null),
   lastName: Joi.string().allow(null),
   image: Joi.string().allow(null),
-  password: Joi.string().min(6).required(),
 };
 
 const imageField = (req: Request, data: User): User => {
@@ -76,7 +75,7 @@ export const register = async (req: Request): Promise<User> => {
     ...base,
     username: Joi.string().min(2).max(32).required(),
     email: Joi.string().min(2).required(),
-    password: Joi.string().min(6).required(),
+    password: Joi.string().min(8).required(),
   });
   const data = await schema.validateAsync(req.body);
 
@@ -93,7 +92,7 @@ export const register = async (req: Request): Promise<User> => {
 export const login = async (req: Request): Promise<User> => {
   const schema = Joi.object<User>({
     username: Joi.string().min(2).max(32).required(),
-    password: Joi.string().min(6).required(),
+    password: Joi.string().min(8).required(),
   });
 
   return await schema.validateAsync(req.body);
@@ -118,13 +117,21 @@ export const updateAccount = joi.object<User>({
 });
 
 // Sending email in case of a password reset
-export const emailToken = joi.object<EmailPassReset>({
-  email: Joi.string().required(),
-});
+export const resetEmail = async (req: Request): Promise<ResetEmail> => {
+  const schema = Joi.object<ResetEmail>({
+    email: Joi.string().required(),
+  });
 
-// Password reset when the user in not authenticated and old password is forgotten
-export const passReset = joi.object<PassReset>({
-  email: Joi.string().required(),
-  uniqueKey: Joi.string().required().min(5).max(7),
-  password: Joi.string().required(),
-});
+  return await schema.validateAsync(req.body);
+};
+
+// Unique key validation
+export const resetConfirm = async (req: Request): Promise<ResetConfirm> => {
+  const schema = joi.object<ResetConfirm>({
+    email: Joi.string().required(),
+    uniqueKey: Joi.string().required().min(5).max(7),
+    password: joi.string().min(8),
+  });
+
+  return await schema.validateAsync(req.body);
+};

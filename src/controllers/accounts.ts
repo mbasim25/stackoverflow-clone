@@ -3,7 +3,7 @@ import { prisma } from "../server";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import * as validators from "../validators/validators";
-import { User, PasswordChange, PassReset, EmailPassReset } from "../types";
+import { User, PasswordChange, ResetEmail, ResetConfirm } from "../types";
 import { secrets, mail } from "../utils";
 
 class Controller {
@@ -172,6 +172,7 @@ class Controller {
     }
   };
 
+  // TODO: restructure and rewrite
   updateAccount = async (req: Request, res: Response) => {
     try {
       const data: User = await validators.updateAccount.validateAsync(req.body);
@@ -203,33 +204,28 @@ class Controller {
     }
   };
 
-  emailToken = async (req: Request, res: Response) => {
+  resetEmail = async (req: Request, res: Response) => {
     try {
-      const data: EmailPassReset = await validators.emailToken.validateAsync(
-        req.body
-      );
+      // Validation
+      const data: ResetEmail = await validators.resetEmail(req);
 
+      // Find user
       const user = await prisma.user.findUnique({
-        where: {
-          email: data.email,
-        },
+        where: { email: data.email },
       });
 
+      // Checking the data
       if (!user) {
-        return res.status(404).send("no user found");
+        return res.status(404).json("no user found");
       } else if (user.email !== data.email) {
-        return res.status(403).send("the data the was provided is incorrect");
+        return res.status(403).json("the data the was provided is incorrect");
       }
 
+      // Create a unique key
       const random = Math.floor(100000 + Math.random() * 900000).toString();
-      const options: any = {
-        from: secrets.email,
-        to: user.email,
-        subject: "Password Reset",
-        text: random,
-      };
 
-      const token: PassReset = await prisma.resetToken.create({
+      // Save a token with those credentials
+      await prisma.resetToken.create({
         data: {
           email: user.email,
           userId: user.id,
@@ -237,37 +233,48 @@ class Controller {
         },
       });
 
+      // Email options
+      const options: any = {
+        from: secrets.email,
+        to: user.email,
+        subject: "Password Reset",
+        text: random,
+      };
+
+      // Send email
       mail.transporter.sendMail(options, (error: any, success: any) => {
         if (error) {
-          return res.status(400).send("error sending the email");
+          return res.status(400).json("error sending the email");
         }
-        return res.status(200).send(success);
+        return res.status(200).json("You will recieve your email shortly");
       });
-
-      return res.status(200).send();
     } catch (e) {
-      res.status(400).send();
+      res.status(400);
     }
   };
 
-  passReset = async (req: Request, res: Response) => {
+  resetConfirm = async (req: Request, res: Response) => {
     try {
-      const data: PassReset = await validators.passReset.validateAsync(
-        req.body
-      );
+      // Validation
+      const data: ResetConfirm = await validators.resetConfirm(req);
+
+      // Find token
       const token = await prisma.resetToken.findUnique({
         where: {
           uniqueKey: data.uniqueKey,
         },
       });
 
+      // Check if the token exists
       if (!token) {
-        return res.status(404).send();
+        return res.status(404);
       }
 
+      // Hash the password
       data.password = await bcrypt.hash(data.password, 12);
 
-      const user = await prisma.user.update({
+      // Update the user's password
+      await prisma.user.update({
         where: {
           email: data.email,
         },
@@ -276,9 +283,9 @@ class Controller {
         },
       });
 
-      return res.status(200).send("password changed");
+      return res.status(200).json("password changed");
     } catch (e) {
-      return res.status(400).send();
+      return res.status(400).json();
     }
   };
 }
