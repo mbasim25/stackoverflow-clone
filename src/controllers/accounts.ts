@@ -38,9 +38,9 @@ class Controller {
       if (!user.isActive) {
         return res
           .status(403)
-          .send("this account was deactivated by moderators");
+          .json("this account was deactivated by moderators");
       } else if (!(await bcrypt.compare(data.password, user.password))) {
-        return res.status(403).send("username or password were incorrect");
+        return res.status(403).json("username or password were incorrect");
       }
 
       // Tokens assignment
@@ -77,7 +77,7 @@ class Controller {
       });
 
       if (!user) {
-        return res.status(404).send("User not found");
+        return res.status(404).json("User not found");
       }
 
       // Assign tokens
@@ -134,9 +134,9 @@ class Controller {
 
       // Security
       if (!user) {
-        return res.status(404).send("user not found");
+        return res.status(404).json("user not found");
       } else if (user.id !== requester.id) {
-        return res.status(403).send();
+        return res.status(403).json();
       }
 
       // Update
@@ -147,9 +147,9 @@ class Controller {
         },
       });
 
-      return res.status(200).send(await validators.reshape(updated));
+      return res.status(200).json(await validators.reshape(updated));
     } catch (e) {
-      return res.status(400).send();
+      return res.status(400).json();
     }
   };
 
@@ -167,9 +167,9 @@ class Controller {
           isActive: true,
         },
       });
-      return res.status(200).send(superadmin);
+      return res.status(200).json(superadmin);
     } catch (e) {
-      res.send();
+      res.json();
     }
   };
 
