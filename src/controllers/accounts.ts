@@ -34,6 +34,7 @@ class Controller {
       });
 
       // Security
+      // TODO: make this a middleware
       if (!user.isActive) {
         return res
           .status(403)
@@ -113,6 +114,42 @@ class Controller {
     }
   };
 
+  // TODO: restructure and rewrite
+  updateAccount = async (req: Request, res: Response) => {
+    try {
+      // Validation
+      const data: User = await validators.updateAccount(req);
+
+      const requester: any = req.user;
+
+      // Find user
+      const user = await prisma.user.findUnique({
+        where: {
+          id: requester.id,
+        },
+      });
+
+      // Security
+      if (!user) {
+        return res.status(404).send("user not found");
+      } else if (user.id !== requester.id) {
+        return res.status(403).send();
+      }
+
+      // Update
+      const updated: User = await prisma.user.update({
+        where: { id: requester.id },
+        data: {
+          ...data,
+        },
+      });
+
+      return res.status(200).send(await validators.reshape(updated));
+    } catch (e) {
+      return res.status(400).send();
+    }
+  };
+
   // TODO: make super admin a seed data and not a controller
   super = async (req: Request, res: Response) => {
     try {
@@ -169,38 +206,6 @@ class Controller {
       return res.status(200).json("password changed");
     } catch (e) {
       return res.status(400).json();
-    }
-  };
-
-  // TODO: restructure and rewrite
-  updateAccount = async (req: Request, res: Response) => {
-    try {
-      const data: User = await validators.updateAccount.validateAsync(req.body);
-
-      const requester: any = req.user;
-
-      const user = await prisma.user.findUnique({
-        where: {
-          id: requester.id,
-        },
-      });
-
-      if (!user) {
-        return res.status(404).send("user not found");
-      } else if (user.id !== requester.id) {
-        return res.status(403).send();
-      }
-
-      const updated: User = await prisma.user.update({
-        where: { id: requester.id },
-        data: {
-          ...data,
-        },
-      });
-
-      return res.status(200).send(updated);
-    } catch (e) {
-      return res.status(400).send();
     }
   };
 

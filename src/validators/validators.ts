@@ -17,7 +17,6 @@ const imageField = (req: Request, data: User): User => {
   }
 
   const files: any = req.files;
-
   if (files.image) {
     data.image = files.image[0].location;
   }
@@ -108,13 +107,18 @@ export const passwordChange = async (req: Request): Promise<PasswordChange> => {
   return await schema.validateAsync(req.body);
 };
 
-export const updateAccount = joi.object<User>({
-  username: Joi.string().min(2).max(32),
-  email: Joi.string().min(6),
-  image: Joi.string().allow(null),
-  firstName: Joi.string().allow(null),
-  lastName: Joi.string().allow(null),
-});
+export const updateAccount = async (req: Request): Promise<User> => {
+  const schema = Joi.object<User>({
+    ...base,
+    username: joi.string(),
+    email: joi.string().email(),
+  });
+  const data = await schema.validateAsync(req.body);
+
+  imageField(req, data);
+
+  return data;
+};
 
 // Sending email in case of a password reset
 export const resetEmail = async (req: Request): Promise<ResetEmail> => {
