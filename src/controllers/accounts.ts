@@ -69,7 +69,7 @@ class Controller {
     try {
       // Decode token
       const refresh = jwt.decode(req.body.refreshToken, { complete: true });
-      const id = refresh.patload.id;
+      const id = refresh.payload.id;
 
       // Find user
       const user: User = await prisma.user.findUnique({

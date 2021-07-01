@@ -10,7 +10,7 @@ router.post("/register", uploads.userImage, controller.registration);
 router.post("/login", controller.login);
 
 // Refresh token
-router.post("/refresh-token", controller.refreshToken);
+router.post("/tokens/refresh", controller.refreshToken);
 
 // Password reset
 router.post("/passwords/email", controller.resetEmail);
