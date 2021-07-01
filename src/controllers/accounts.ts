@@ -106,6 +106,10 @@ class Controller {
       // Find user
       const user = await prisma.user.findUnique({
         where: { id: requester.id },
+        include: {
+          Question: { select: { body: true } },
+          Answer: { select: { body: true } },
+        },
       });
 
       return res.status(200).json(await validators.reshape(user));
