@@ -118,7 +118,6 @@ class Controller {
     }
   };
 
-  // TODO: restructure and rewrite
   updateAccount = async (req: Request, res: Response) => {
     try {
       // Validation
