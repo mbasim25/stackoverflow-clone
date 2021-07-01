@@ -13,7 +13,7 @@ router.post("/login", controller.login);
 router.post("/refresh-token", controller.refreshToken);
 
 // Password reset
-router.post("passwords/email", controller.resetEmail);
+router.post("/passwords/email", controller.resetEmail);
 router.patch("/passwords/reset", controller.resetConfirm);
 
 // Super admin for development only
