@@ -1,6 +1,6 @@
 import { Router } from "express";
-import controller from "../controllers/accounts";
 import passport from "passport";
+import controller from "../controllers/accounts";
 import { uploads } from "../utils";
 
 const router = Router();

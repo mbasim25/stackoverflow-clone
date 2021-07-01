@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { prisma } from "../server";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import * as validators from "../validators/validators";
+import * as validators from "../validators/users";
 import { User, PasswordChange, ResetEmail, ResetConfirm } from "../types";
 import { secrets, mail } from "../utils";
 
