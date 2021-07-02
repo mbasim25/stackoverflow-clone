@@ -4,7 +4,7 @@ import compression from "compression";
 import helmet from "helmet";
 import morgan from "morgan";
 import passport from "passport";
-import routers from "./routers";
+import router from "./routers/index";
 import { secrets } from "./utils";
 import { JWTStrategy } from "./utils/passport";
 
@@ -32,12 +32,7 @@ app.use(logger);
 app.use(passport.initialize());
 passport.use("jwt", JWTStrategy);
 
-// Routers
-app.use("/users", routers.users);
-app.use("/accounts", routers.accounts);
-app.use("/questions", routers.questions);
-app.use("/answers", routers.answers);
-app.use("/question/likes", routers.questionLike);
+app.use(router);
 
 // Error handler
 if (secrets.NODE_ENV === "development") {
