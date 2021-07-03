@@ -1,13 +1,10 @@
 import { Router } from "express";
-import controller from "../controllers/questions";
 import passport from "passport";
+import controller from "../controllers/questions";
 
-// Create the router object
 const router = Router();
 
 router.use(passport.authenticate("jwt", { session: false }));
-
-//CRUD
 
 // Get a list of questions
 router.get("", controller.list);

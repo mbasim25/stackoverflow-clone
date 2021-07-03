@@ -1,24 +1,25 @@
 import { Router } from "express";
-import controller from "../controllers/users";
 import passport from "passport";
-import multer from "multer";
-const upload = multer({ dest: "uploads/" });
+import controller from "../controllers/users";
+import { uploads } from "../utils";
+import { isSuper } from "../middlewares/permissions";
 
 // Create the router object
 const router = Router();
 
 router.use(passport.authenticate("jwt", { session: false }));
+router.use(isSuper);
 
 //CRUD for the super admin
 
 // View a list of all the users in the db
-router.get("", controller.list);
+router.get("/", controller.list);
 
 // Create a new user or an admin
-router.post("/", upload.single("image"), controller.create);
+router.post("/", uploads.userImage, controller.create);
 
 // Update a user or an admin
-router.patch("/:id", controller.update);
+router.patch("/:id", uploads.userImage, controller.update);
 
 // Delete a user or an admin
 router.delete("/:id", controller.destroy);

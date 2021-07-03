@@ -1,90 +1,102 @@
 import { Request, Response } from "express";
-import bcrypt from "bcrypt";
+import { prisma } from "../server";
 import * as validators from "../validators/users";
 import { User } from "../types";
-import { prisma } from "../server";
-import util from "util";
-import fs from "fs";
-const unlinkFile = util.promisify(fs.unlink);
 
 class Controller {
   list = async (req: Request, res: Response) => {
     try {
-      const admin: any = req.user;
-      if (!admin.isSuperAdmin) {
-        res.send(401).send();
+      // Validation
+      const query = await validators.query(req);
+
+      // Filters object
+      const filters = {
+        id: query.id,
+        username: query.username,
+        email: query.email,
+        role: query.role,
+      };
+
+      // Get users list
+      const users = await prisma.user.findMany({
+        skip: query.skip,
+        take: query.take,
+        where: filters,
+      });
+
+      // Delete password
+      for (const user of users) {
+        await validators.reshape(user);
       }
-      const users = await prisma.user.findMany({});
-      return res.status(200).send(users);
+
+      return res.status(200).json({
+        count: await prisma.user.count({ where: filters }),
+        users: users,
+      });
     } catch (e) {
-      res.status(400).send();
+      return res.status(400).json();
     }
   };
 
   create = async (req: Request, res: Response) => {
     try {
-      const data: User = await validators.createUser.validateAsync(req.body);
-      data.password = await bcrypt.hash(data.password, 12);
+      // Validate the data
+      const data: User = await validators.createUser(req);
 
-      const user = await prisma.user.create({
-        data: {
-          username: data.username,
-          email: data.email,
-          password: data.password,
-        },
-      });
-      return res.status(201).send(user.username);
+      // Create the user
+      const user = await prisma.user.create({ data });
+
+      return res.status(201).json(await validators.reshape(user));
     } catch (e) {
-      console.log(e);
-      res.status(400).send(e);
+      return res.status(400).json();
     }
   };
 
   update = async (req: Request, res: Response) => {
     try {
-      const admin: any = req.user;
-      if (!admin.isSuperAdmin) {
-        return res.status(401).send("unauthorized");
+      // Validate
+      const data: User = await validators.updateUser(req);
+
+      const id = req.params.id;
+
+      // Find the user by id
+      const unique = await prisma.user.findUnique({ where: { id } });
+
+      // Check if the user exists
+      if (!unique) {
+        return res.status(404).json("User not found");
       }
 
-      const data: User = await validators.updateUser.validateAsync(req.body);
-
+      // Update
       const user = await prisma.user.update({
-        where: {
-          id: req.params.id,
-        },
-        data: {
-          ...data,
-        },
+        where: { id },
+        data,
       });
 
-      if (!user) {
-        return res.status(404).send();
-      }
-
-      return res.status(200).send("user updated");
+      return res.status(200).json(await validators.reshape(user));
     } catch (e) {
-      res.status(400).send();
+      return res.status(400).json();
     }
   };
 
   destroy = async (req: Request, res: Response) => {
     try {
-      const data: User = await validators.superAdmin.validateAsync(req.user);
-      if (!data.isSuperAdmin) {
-        return res.send(401).send("unauthorized");
+      const id = req.params.id;
+
+      // Find the user by id
+      const unique = await prisma.user.findUnique({ where: { id } });
+
+      // Check if the user exists
+      if (!unique) {
+        return res.status(404).json("User not found");
       }
-      const user = await prisma.user.delete({
-        where: {
-          id: req.params.id,
-        },
-      });
-      if (!user) {
-        return res.status(404).send();
-      }
-      return res.status(204).send("user deleted");
+
+      // Delete
+      await prisma.user.delete({ where: { id } });
+
+      return res.status(204);
     } catch (e) {
-      res.status(400).send(e);
+      return res.status(400).json();
     }
   };
 }

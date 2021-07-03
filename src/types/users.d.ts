@@ -1,6 +1,14 @@
 import { User as BaseUser } from ".prisma/client";
+import { Pagination as BasePagination } from "./pagination";
 
 export interface User extends BaseUser {}
+
+export interface UserQuery extends BasePagination {
+  id: string;
+  username: string;
+  email: string;
+  role: "USER" | "ADMIN";
+}
 
 // Password update when authenticated and the old password is known
 export interface PasswordChange {

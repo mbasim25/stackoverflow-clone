@@ -7,11 +7,6 @@ const router = Router();
 
 router.use(passport.authenticate("jwt", { session: false }));
 
-//CRUD
-
-// Get a list of questions
-// router.get("", controller.list);
-
 // create a question
 router.post("/", controller.create);
 
