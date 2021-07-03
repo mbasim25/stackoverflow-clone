@@ -34,12 +34,7 @@ class Controller {
       });
 
       // Security
-      // TODO: make this a middleware
-      if (!user.isActive) {
-        return res
-          .status(403)
-          .json("this account was deactivated by moderators");
-      } else if (!(await bcrypt.compare(data.password, user.password))) {
+      if (!(await bcrypt.compare(data.password, user.password))) {
         return res.status(403).json("username or password were incorrect");
       }
 
@@ -142,9 +137,7 @@ class Controller {
       // Update
       const updated: User = await prisma.user.update({
         where: { id: requester.id },
-        data: {
-          ...data,
-        },
+        data,
       });
 
       return res.status(200).json(await validators.reshape(updated));
@@ -156,20 +149,13 @@ class Controller {
   // TODO: make super admin a seed data and not a controller
   super = async (req: Request, res: Response) => {
     try {
-      req.body.password = await bcrypt.hash(req.body.password, 12);
-      const superadmin = await prisma.user.create({
-        data: {
-          username: req.body.username,
-          email: req.body.email,
-          password: req.body.password,
-          isAdmin: true,
-          isSuperAdmin: true,
-          isActive: true,
-        },
-      });
+      const data = await validators.superAdmin(req);
+
+      const superadmin = await prisma.user.create({ data });
+
       return res.status(200).json(superadmin);
     } catch (e) {
-      res.json();
+      return res.status(400).json();
     }
   };
 
@@ -257,10 +243,11 @@ class Controller {
         return res.status(200).json("You will recieve your email shortly");
       });
     } catch (e) {
-      res.status(400);
+      return res.status(400);
     }
   };
 
+  // TODO: Change password reset to 3 requests
   resetConfirm = async (req: Request, res: Response) => {
     try {
       // Validation

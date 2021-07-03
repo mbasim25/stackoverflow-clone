@@ -7,6 +7,12 @@ generator client {
   provider = "prisma-client-js"
 }
 
+enum Role {
+  USER
+  ADMIN
+  SUPERADMIN
+}
+
 model User {
   id            String         @id @default(cuid())
   username      String         @unique
@@ -17,8 +23,7 @@ model User {
   password      String
   score         Int            @default(0)
   isActive      Boolean        @default(true)
-  isAdmin       Boolean        @default(false)
-  isSuperAdmin  Boolean        @default(false)
+  role          Role           @default(USER)
   Question      Question[]
   Answer        Answer[]
   QuesComment   QuesComment[]
