@@ -1,6 +1,5 @@
 import { Request } from "express";
 import Joi from "joi";
-import joi from "joi";
 import bcrypt from "bcrypt";
 import { pagination } from "./pagination";
 import {
@@ -38,7 +37,7 @@ export const reshape = async (user: User) => {
 };
 
 export const createUser = async (req: Request): Promise<User> => {
-  const schema = joi.object<User>({
+  const schema = Joi.object<User>({
     ...base,
     username: Joi.string().min(2).max(32).required(),
     email: Joi.string().min(6).required(),
@@ -59,7 +58,7 @@ export const createUser = async (req: Request): Promise<User> => {
 };
 
 export const updateUser = async (req: Request): Promise<User> => {
-  const schema = joi.object<User>({
+  const schema = Joi.object<User>({
     ...base,
     username: Joi.string().min(2).max(32),
     email: Joi.string().min(6),
@@ -141,8 +140,8 @@ export const passwordChange = async (req: Request): Promise<PasswordChange> => {
 export const updateAccount = async (req: Request): Promise<User> => {
   const schema = Joi.object<User>({
     ...base,
-    username: joi.string(),
-    email: joi.string().email(),
+    username: Joi.string(),
+    email: Joi.string().email(),
   });
   const data = await schema.validateAsync(req.body);
 
@@ -162,10 +161,10 @@ export const resetEmail = async (req: Request): Promise<ResetEmail> => {
 
 // Password reset validation
 export const resetConfirm = async (req: Request): Promise<ResetConfirm> => {
-  const schema = joi.object<ResetConfirm>({
+  const schema = Joi.object<ResetConfirm>({
     email: Joi.string().required(),
     uniqueKey: Joi.string().required().min(5).max(7),
-    password: joi.string().min(8),
+    password: Joi.string().min(8),
   });
 
   return await schema.validateAsync(req.body);
@@ -175,10 +174,10 @@ export const resetConfirm = async (req: Request): Promise<ResetConfirm> => {
 export const query = async (req: Request): Promise<UserQuery> => {
   const schema = Joi.object<UserQuery>({
     ...pagination,
-    id: joi.string().allow(""),
-    username: joi.string().allow(""),
-    email: joi.string().allow(""),
-    role: joi.string().valid("USER", "ADMIN"),
+    id: Joi.string().allow(""),
+    username: Joi.string().allow(""),
+    email: Joi.string().allow(""),
+    role: Joi.string().valid("USER", "ADMIN"),
   });
 
   return await schema.validateAsync(req.query);
