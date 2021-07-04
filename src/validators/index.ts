@@ -1,5 +1,5 @@
 import * as validators from "./users";
-import * as questionvalidator from "./questionvalidators";
-import * as answervalidator from "./answervalidators";
+import * as question from "./questions";
+import * as answer from "./answers";
 import * as pagination from "./pagination";
-export { validators, pagination, questionvalidator, answervalidator };
+export { validators, pagination, question, answer };

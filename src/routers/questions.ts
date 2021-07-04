@@ -1,24 +1,24 @@
 import { Router } from "express";
 import passport from "passport";
 import controller from "../controllers/questions";
+import { isOwnerOrAdmin } from "../middlewares/permissions";
 
 const router = Router();
-
-router.use(passport.authenticate("jwt", { session: false }));
 
 // Get a list of questions
 router.get("", controller.list);
 
-// get a question
-router.get("/:id", controller.retrieve);
+router.use(passport.authenticate("jwt", { session: false }));
 
-// create a question
+// create
 router.post("/", controller.create);
 
-// Update a question if owner or an admin
-router.patch("/:id", controller.update);
+// Only the owner or an admin can perform this action
 
-// Delete a question if owner or an admin
+// Update
+router.patch("/:id", isOwnerOrAdmin, controller.update);
+
+// Delete
 router.delete("/:id", controller.destroy);
 
 export default router;
