@@ -1,11 +1,11 @@
 # StackOverflow-clone
 
-Starter template used in this project is made by Ali Mehasin and can be found [here]. 
+Starter template used in this project can be found [here].
 
 ## Guidelines
 
 1. **Agile software development**
-2. Types for each entity 
+2. Types for each entity
 3. Unit testing for every feature(TDD)
 
 ## Main Tools and packages
@@ -17,18 +17,17 @@ Starter template used in this project is made by Ali Mehasin and can be found [h
 5. Joi
 6. AWS S3
 7. Nodemailer
+8. Jest/Supertest
 
 ## What is the project about
 
-- Any user can ask a question
-- Any user can answer a question
-- Questions and answers accept comments
-- Any user can like any question or answer 
-- Profile image AWS S3 integration 
+- Users can ask and answer questions
+- Questions and answers accept likes and comments
+- Profile image AWS S3 integration
 - A user has a score (still not done)
-- A user can’t upvote or downvote if he/she is not above certain level (still not done)
-- There will be 3 types of users (user, admin, superadmin) with different permissions
-- Password Reset via email using Nodemailer and an auto generated OTP
-- Validation for each request using joi
+- A user can’t upvote or downvote if they're not above certain level (still not done)
+- 3 types of users (user, admin, superadmin) with different permissions
+- Password Reset using Nodemailer and an OTP
+- Validation using joi
 
 [here]: https://github.com/alimehasin/node-starter
