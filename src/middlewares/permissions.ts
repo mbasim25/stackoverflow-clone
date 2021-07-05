@@ -26,7 +26,8 @@ export const isSuper = async (
   }
 };
 
-// Router level middleware to check if the user is the owner, an admin or a super admin
+// TODO: write this in a better way for production
+// Router level middleware to check if the user is the owner, an admin or super admin
 export const isOwnerOrAdmin = async (
   req: Request,
   res: Response,
