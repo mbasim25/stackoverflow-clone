@@ -1,6 +1,6 @@
 import { Request } from "express";
 import Joi from "joi";
-import { Answer, AnswerFilter, AnswerLike } from "../types";
+import { Answer, AnswerFilter, AnswerVote } from "../types";
 import { pagination } from "./pagination";
 
 // Answers Validation
@@ -35,11 +35,25 @@ export const query = async (req: Request): Promise<AnswerFilter> => {
   return await schema.validateAsync(req.query);
 };
 
-export const answerLike = Joi.object<AnswerLike>({
-  answerId: Joi.string().required(),
-  type: Joi.string().required(),
-});
+// Votes validation
 
-export const answerLikeUpdate = Joi.object<AnswerLike>({
-  type: Joi.string().required(),
-});
+const baseVotes = {
+  type: Joi.string().valid("UPVOTE", "DOWNVOTE").required(),
+};
+
+// Create validator
+export const voteCreate = async (req: Request): Promise<AnswerVote> => {
+  const schema = Joi.object<AnswerVote>({
+    ...baseVotes,
+    answerId: Joi.string().required(),
+  });
+
+  return await schema.validateAsync(req.body);
+};
+
+// Update validator
+export const voteUpdate = async (req: Request): Promise<AnswerVote> => {
+  const schema = Joi.object<AnswerVote>(baseVotes);
+
+  return await schema.validateAsync(req.body);
+};

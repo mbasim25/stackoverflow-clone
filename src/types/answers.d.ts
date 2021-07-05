@@ -1,4 +1,5 @@
 import { Answer as BaseAnswer } from ".prisma/client";
+import { AnswerVote as BaseVote } from ".prisma/client";
 import { Pagination as BasePagination } from "./pagination";
 
 export interface Answer extends BaseAnswer {}
@@ -12,9 +13,4 @@ export interface AnswerFilter extends BasePagination {
   body: string;
 }
 
-export interface AnswerLike {
-  id?: number;
-  userId?: string;
-  answerId?: string;
-  type?: any;
-}
+export interface AnswerVote extends BaseVote {}

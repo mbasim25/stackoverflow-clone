@@ -1,4 +1,5 @@
 import { Question as BaseQuestion } from ".prisma/client";
+import { QuestionVote as BaseVotes } from ".prisma/client";
 import { Pagination as BasePagination } from "./pagination";
 
 export interface Question extends BaseQuestion {}
@@ -11,9 +12,4 @@ export interface QuestionFilter extends BasePagination {
   body: string;
 }
 
-export interface QuestionLike {
-  id?: number;
-  userId?: string;
-  questionId?: string;
-  type?: any;
-}
+export interface QuestionVote extends BaseVotes {}
