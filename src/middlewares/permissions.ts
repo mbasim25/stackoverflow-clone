@@ -34,25 +34,23 @@ export const isOwnerOrAdmin = async (
 ) => {
   try {
     const requester: any = req.user;
-    const id = requester.id;
-    const param = req.params.id;
+    const id = req.params.id;
 
     // Find the user
-    const user = await prisma.user.findUnique({ where: { id } });
+    const user = await prisma.user.findUnique({ where: { id: requester.id } });
 
     // Find the question
-    const question = await prisma.question.findUnique({
-      where: { id: param },
-    });
+    const question = await prisma.question.findUnique({ where: { id } });
 
-    const answer = await prisma.answer.findUnique({ where: { id: param } });
+    const answer = await prisma.answer.findUnique({ where: { id } });
 
     const object = question || answer;
+
     // Check the role
     if (
       user.role !== "SUPERADMIN" &&
       user.role !== "ADMIN" &&
-      object.userId !== id
+      object.userId !== user.id
     ) {
       return res
         .status(403)
