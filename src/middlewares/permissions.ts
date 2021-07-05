@@ -16,10 +16,9 @@ export const isSuper = async (
 
     // Check the role
     if (user.role !== "SUPERADMIN") {
-      return res
-        .status(403)
-        .json("You dont have permission to perform this action");
+      return res.status(404).json();
     }
+
     // Allow access
     next();
   } catch (e) {
@@ -36,26 +35,30 @@ export const isOwnerOrAdmin = async (
   try {
     const requester: any = req.user;
     const id = requester.id;
-    const questionId = req.params.id;
+    const param = req.params.id;
 
     // Find the user
     const user = await prisma.user.findUnique({ where: { id } });
 
     // Find the question
     const question = await prisma.question.findUnique({
-      where: { id: questionId },
+      where: { id: param },
     });
 
+    const answer = await prisma.answer.findUnique({ where: { id: param } });
+
+    const object = question || answer;
     // Check the role
     if (
       user.role !== "SUPERADMIN" &&
       user.role !== "ADMIN" &&
-      question.userId !== id
+      object.userId !== id
     ) {
       return res
         .status(403)
         .json("You dont have permission to perform this action");
     }
+
     // Allow access
     next();
   } catch (e) {

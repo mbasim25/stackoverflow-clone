@@ -7,7 +7,7 @@ class Controller {
   create = async (req: Request, res: Response) => {
     try {
       const data: QuestionLike =
-        await validators.questionvalidator.questionLike.validateAsync(req.body);
+        await validators.question.questionLike.validateAsync(req.body);
       const user: any = req.user;
 
       const like = await prisma.questionLike.create({
@@ -41,9 +41,7 @@ class Controller {
         return res.status(403).send("unauthorized access");
       }
       const data: QuestionLike =
-        await validators.questionvalidator.questionLikeUpdate.validateAsync(
-          req.body
-        );
+        await validators.question.questionLikeUpdate.validateAsync(req.body);
 
       const updated = await prisma.questionLike.update({
         where: {

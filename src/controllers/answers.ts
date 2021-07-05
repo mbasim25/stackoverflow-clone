@@ -1,135 +1,105 @@
 import { Request, Response } from "express";
-import * as validators from "../validators";
-import { Answer, User } from "../types/";
 import { prisma } from "../server";
+import Joi from "joi";
+import { Answer } from "../types/";
+import * as validators from "../validators";
 
 class Controller {
-  retrieve = async (req: Request, res: Response) => {
-    try {
-      const id = req.params.id;
-
-      const answer = await prisma.answer.findUnique({
-        where: {
-          id: id,
-        },
-      });
-
-      const likes = await prisma.answerLike.findMany({
-        where: {
-          answerId: id,
-        },
-      });
-
-      let score = 0;
-      for (const like of likes) {
-        if (like.type === "like") {
-          score += 1;
-        } else {
-          score -= 1;
-        }
-      }
-
-      return res.status(200).send({ answer, score });
-    } catch (e) {
-      return res.status(400).send();
-    }
-  };
-
   list = async (req: Request, res: Response) => {
     try {
-      const user: any = req.user;
-      const skip = req.params.skip;
-      const take = req.params.take;
+      // Validation
+      const query = await validators.answer.query(req);
 
+      // Filters object
+      const filters = {
+        id: query.id,
+        questionId: query.questionId,
+        userId: query.userId,
+        votes: {
+          lte: query.maxVotes,
+          gte: query.minVotes,
+        },
+        body: { contains: query.body },
+      };
+
+      // Find
       const answers = await prisma.answer.findMany({
-        skip: parseInt(skip) || 0,
-        take: parseInt(take) || 10,
-        where: { userId: user.id },
+        skip: query.skip,
+        take: query.take,
+        where: filters,
       });
 
-      return res.status(200).send(answers);
+      return res.status(200).json({
+        count: await prisma.answer.count({ where: filters }),
+        answers,
+      });
     } catch (e) {
-      return res.status(400).send();
+      return res.status(400).json();
     }
   };
 
   create = async (req: Request, res: Response) => {
     try {
-      const data: Answer =
-        await validators.answervalidator.createAnswer.validateAsync(req.body);
+      // Validation
+      const data: Answer = await validators.answer.create(req);
       const user: any = req.user;
 
+      // Create
       const answer = await prisma.answer.create({
-        data: { body: data.body, userId: user.id, questionId: data.questionId },
+        data: { ...data, userId: user.id },
       });
 
-      return res.status(201).send(answer);
+      return res.status(201).json(answer);
     } catch (e) {
-      return res.status(400).send();
+      return res.status(400).json();
     }
   };
 
   update = async (req: Request, res: Response) => {
     try {
-      const user: any = req.user;
-      const id = req.params.id;
+      // Validation
+      const data: Answer = await validators.answer.update(req);
+      const id = await Joi.string().validateAsync(req.params.id);
 
-      const answer = await prisma.answer.findUnique({
-        where: {
-          id: id,
-        },
-      });
+      // Find unique
+      const unique = await prisma.answer.findUnique({ where: { id } });
 
-      if (!answer) {
-        return res.status(404).send("answer not found");
-      } else if (answer.userId !== user.id) {
-        return res.status(403).send("unauthorized access");
+      // Check if it exists
+      if (!unique) {
+        return res.status(404).json("Not found");
       }
 
-      const data: Answer =
-        await validators.answervalidator.updateAnswer.validateAsync(req.body);
-
-      const updated = await prisma.answer.update({
-        where: {
-          id: answer.id,
-        },
-        data: {
-          body: data.body,
-        },
+      // Update
+      const answer = await prisma.answer.update({
+        where: { id },
+        data,
       });
 
-      return res.status(200).send(updated.body);
+      return res.status(200).json(answer);
     } catch (e) {
-      return res.status(400).send();
+      return res.status(400).json();
     }
   };
 
   destroy = async (req: Request, res: Response) => {
     try {
-      const user: any = req.user;
-      const id = req.params.id;
+      // Validate the id
+      const id = await Joi.string().validateAsync(req.params.id);
 
-      const answer = await prisma.answer.findUnique({
-        where: {
-          id: id,
-        },
-      });
+      // Find unique
+      const answer = await prisma.answer.findUnique({ where: { id } });
 
+      // Check if it exists
       if (!answer) {
-        return res.status(404).send("answer not found");
-      } else if (answer.userId !== user.id) {
-        return res.status(403).send("unauthorized access");
+        return res.status(404).json("Not found");
       }
 
-      await prisma.answer.delete({
-        where: {
-          id: answer.id,
-        },
-      });
+      // Delete
+      await prisma.answer.delete({ where: { id } });
 
-      return res.status(204).send("answer deleted succesfully");
+      return res.status(204).json();
     } catch (e) {
-      return res.status(400).send();
+      return res.status(400).json();
     }
   };
 }

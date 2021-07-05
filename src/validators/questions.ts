@@ -3,7 +3,7 @@ import Joi from "joi";
 import { Question, QuestionFilter, QuestionLike } from "../types";
 import { pagination } from "./pagination";
 
-const base = { body: Joi.string() };
+const base = { body: Joi.string().required() };
 
 // Question create
 export const create = async (req: Request): Promise<Question> => {
@@ -14,14 +14,14 @@ export const create = async (req: Request): Promise<Question> => {
 
 // Question update
 export const update = async (req: Request): Promise<Question> => {
-  const schema = Joi.object(base);
+  const schema = Joi.object<Question>(base);
 
   return await schema.validateAsync(req.body);
 };
 
 // Filters
 export const query = async (req: Request): Promise<QuestionFilter> => {
-  const schema = Joi.object({
+  const schema = Joi.object<QuestionFilter>({
     ...pagination,
     id: Joi.string().allow(""),
     userId: Joi.string().allow(""),
