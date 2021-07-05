@@ -39,11 +39,11 @@ export const isOwnerOrAdmin = async (
     // Find the user
     const user = await prisma.user.findUnique({ where: { id: requester.id } });
 
-    // Find the question
+    // Find the question or answer
     const question = await prisma.question.findUnique({ where: { id } });
-
     const answer = await prisma.answer.findUnique({ where: { id } });
 
+    // Assign it to the object
     const object = question || answer;
 
     // Check the role
