@@ -1,16 +1,15 @@
 import { Router } from "express";
-import controller from "../controllers/questionLike";
 import passport from "passport";
+import controller from "../controllers/questionLike";
 
-// Create the router object
 const router = Router();
 
 router.use(passport.authenticate("jwt", { session: false }));
 
-// create a question
+// Create
 router.post("/", controller.create);
 
-// Update a question if owner or an admin
+// Update
 router.patch("/:id", controller.update);
 
 // Delete a question if owner or an admin
