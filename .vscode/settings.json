@@ -10,5 +10,12 @@
     "**/bower_components": true,
     "**/*.code-search": true,
     "**/dist": true
-  }
+  },
+  "cSpell.words": [
+    "ansvote",
+    "answervote",
+    "answervotes",
+    "questionvote",
+    "quesvote"
+  ]
 }
