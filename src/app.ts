@@ -5,7 +5,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import cors from "cors";
 import passport from "passport";
-import router from "./routers/index";
+import router from "./routers";
 import { secrets } from "./utils";
 import { JWTStrategy } from "./utils/passport";
 
