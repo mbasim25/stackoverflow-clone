@@ -10,7 +10,7 @@ const server = http.createServer(app);
 const prisma = new PrismaClient();
 
 // Start listening
-server.listen(secrets.PORT, () => {
+server.listen(process.env.PORT, () => {
   console.log(`💻 App listening on port http://localhost:${secrets.PORT}`);
 });
 

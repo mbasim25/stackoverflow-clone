@@ -5,7 +5,7 @@ import { uploads } from "../utils";
 
 const router = Router();
 
-// Registeration & Login
+// Registration & Login
 router.post("/register", uploads.userImage, controller.registration);
 router.post("/login", controller.login);
 
@@ -19,7 +19,7 @@ router.patch("/passwords/reset", controller.resetConfirm);
 // Super admin for development only
 router.post("/super", controller.super);
 
-// JWT required for all the enpoints below
+// JWT required for all the endpoints below
 router.use(passport.authenticate("jwt", { session: false }));
 
 // Get & Update Profile
