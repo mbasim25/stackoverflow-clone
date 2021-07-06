@@ -1,5 +1,6 @@
 import express, { Application } from "express";
 import errorHandler from "errorhandler";
+import cookieParser from "cookie-parser";
 import compression from "compression";
 import helmet from "helmet";
 import morgan from "morgan";
@@ -29,6 +30,9 @@ app.use(express.static("public"));
 // Logging
 const logger = morgan("tiny");
 app.use(logger);
+
+// Parse incoming requests cookies
+app.use(cookieParser(secrets.SECRET_KEY));
 
 // Authentication
 app.use(passport.initialize());
