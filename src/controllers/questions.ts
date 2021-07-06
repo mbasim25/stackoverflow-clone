@@ -33,7 +33,8 @@ class Controller {
         questions,
       });
     } catch (e) {
-      return res.status(400).json();
+      console.log(e);
+      return res.status(400).json(e);
     }
   };
 
