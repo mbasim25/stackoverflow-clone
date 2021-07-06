@@ -1,6 +1,5 @@
 import express, { Application } from "express";
 import errorHandler from "errorhandler";
-import cookieParser from "cookie-parser";
 import compression from "compression";
 import helmet from "helmet";
 import morgan from "morgan";
@@ -12,16 +11,6 @@ import { JWTStrategy } from "./utils/passport";
 
 // Initialize the application
 const app: Application = express();
-
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin,X-Requested-With,Content-Type,Accept,content-type,application/json"
-  );
-  next();
-});
 
 // Security headers
 app.use(cors());
@@ -40,9 +29,6 @@ app.use(express.static("public"));
 // Logging
 const logger = morgan("tiny");
 app.use(logger);
-
-// Parse incoming requests cookies
-app.use(cookieParser(secrets.SECRET_KEY));
 
 // Authentication
 app.use(passport.initialize());
