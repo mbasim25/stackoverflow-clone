@@ -13,6 +13,16 @@ import { JWTStrategy } from "./utils/passport";
 // Initialize the application
 const app: Application = express();
 
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin,X-Requested-With,Content-Type,Accept,content-type,application/json"
+  );
+  next();
+});
+
 // Security headers
 app.use(cors());
 app.use(helmet());
