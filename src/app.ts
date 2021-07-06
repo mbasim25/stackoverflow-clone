@@ -3,6 +3,7 @@ import errorHandler from "errorhandler";
 import compression from "compression";
 import helmet from "helmet";
 import morgan from "morgan";
+import cors from "cors";
 import passport from "passport";
 import router from "./routers/index";
 import { secrets } from "./utils";
@@ -12,6 +13,7 @@ import { JWTStrategy } from "./utils/passport";
 const app: Application = express();
 
 // Security headers
+app.use(cors());
 app.use(helmet());
 
 // Compress requests
