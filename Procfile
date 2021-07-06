@@ -1,2 +1,2 @@
-release:npx prisma migrate deploy
+release:prisma migrate deploy
 web:node dist/server.js
