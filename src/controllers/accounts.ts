@@ -17,7 +17,7 @@ class Controller {
 
       return res.status(201).json(await validators.reshape(user));
     } catch (e) {
-      return res.status(400).json();
+      return res.status(400).json(e);
     }
   };
 
@@ -56,7 +56,7 @@ class Controller {
 
       return res.status(200).json({ token, refresh_token, user });
     } catch (e) {
-      return res.status(400).json();
+      return res.status(400).json(e);
     }
   };
 
@@ -90,7 +90,7 @@ class Controller {
 
       return res.status(200).json({ token, refresh_token });
     } catch (e) {
-      return res.status(400).json();
+      return res.status(400).json(e);
     }
   };
 
@@ -109,7 +109,7 @@ class Controller {
 
       return res.status(200).json(await validators.reshape(user));
     } catch (e) {
-      return res.status(400).json();
+      return res.status(400).json(e);
     }
   };
 
@@ -142,7 +142,7 @@ class Controller {
 
       return res.status(200).json(await validators.reshape(updated));
     } catch (e) {
-      return res.status(400).json();
+      return res.status(400).json(e);
     }
   };
 
@@ -155,7 +155,7 @@ class Controller {
 
       return res.status(200).json(superadmin);
     } catch (e) {
-      return res.status(400).json();
+      return res.status(400).json(e);
     }
   };
 
@@ -194,7 +194,7 @@ class Controller {
 
       return res.status(200).json("password changed");
     } catch (e) {
-      return res.status(400).json();
+      return res.status(400).json(e);
     }
   };
 
@@ -240,10 +240,10 @@ class Controller {
         if (error) {
           return res.status(400).json("error sending the email");
         }
-        return res.status(200).json("You will recieve your email shortly");
+        return res.status(200).json("You will receive your email shortly");
       });
     } catch (e) {
-      return res.status(400);
+      return res.status(400).json(e);
     }
   };
 
@@ -280,7 +280,7 @@ class Controller {
 
       return res.status(200).json("password changed");
     } catch (e) {
-      return res.status(400).json();
+      return res.status(400).json(e);
     }
   };
 }

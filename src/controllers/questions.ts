@@ -33,7 +33,7 @@ class Controller {
         questions,
       });
     } catch (e) {
-      return res.status(400).json();
+      return res.status(400).json(e);
     }
   };
 
@@ -50,7 +50,7 @@ class Controller {
 
       return res.status(201).json(question);
     } catch (e) {
-      return res.status(400).json();
+      return res.status(400).json(e);
     }
   };
 
@@ -76,7 +76,7 @@ class Controller {
 
       return res.status(200).json(question);
     } catch (e) {
-      return res.status(400).json();
+      return res.status(400).json(e);
     }
   };
 
@@ -98,7 +98,7 @@ class Controller {
 
       return res.status(204).json();
     } catch (e) {
-      return res.status(400).json();
+      return res.status(400).json(e);
     }
   };
 }

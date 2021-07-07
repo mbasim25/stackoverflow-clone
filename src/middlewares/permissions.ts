@@ -22,7 +22,7 @@ export const isSuper = async (
     // Allow access
     next();
   } catch (e) {
-    return res.status(400).json;
+    return res.status(400).json();
   }
 };
 
