@@ -8,6 +8,7 @@ export interface UserQuery extends BasePagination {
   username: string;
   email: string;
   role: "USER" | "ADMIN";
+  isActive: boolean;
 }
 
 // Password update when authenticated and the old password is known

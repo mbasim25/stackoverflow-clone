@@ -10,7 +10,7 @@ import {
   ResetConfirm,
 } from "../types";
 
-// User Validation
+// Basic fields
 const base = {
   firstName: Joi.string().allow(null),
   lastName: Joi.string().allow(null),
@@ -163,8 +163,8 @@ export const resetEmail = async (req: Request): Promise<ResetEmail> => {
 export const resetConfirm = async (req: Request): Promise<ResetConfirm> => {
   const schema = Joi.object<ResetConfirm>({
     email: Joi.string().required(),
-    uniqueKey: Joi.string().required().min(5).max(7),
-    password: Joi.string().min(8),
+    uniqueKey: Joi.string().required(),
+    password: Joi.string().min(8).required(),
   });
 
   return await schema.validateAsync(req.body);
@@ -178,6 +178,7 @@ export const query = async (req: Request): Promise<UserQuery> => {
     username: Joi.string().allow(""),
     email: Joi.string().allow(""),
     role: Joi.string().valid("USER", "ADMIN"),
+    isActive: Joi.boolean(),
   });
 
   return await schema.validateAsync(req.query);
