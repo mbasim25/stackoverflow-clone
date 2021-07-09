@@ -16,7 +16,7 @@ class Controller {
       where: { type: "DOWNVOTE", answerId: answer.id },
     });
 
-    //set the count of original question
+    // set the count of original question
     answer.votes = upvotes - downvotes;
 
     return answer;
@@ -91,7 +91,7 @@ class Controller {
 
       // Check if it exists
       if (!unique) {
-        return res.status(404).json("Not found");
+        return res.status(404).json();
       }
 
       // Update
@@ -116,7 +116,7 @@ class Controller {
 
       // Check if it exists
       if (!answer) {
-        return res.status(404).json("Not found");
+        return res.status(404).json();
       }
 
       // Delete
