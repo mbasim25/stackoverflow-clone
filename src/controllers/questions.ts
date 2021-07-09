@@ -5,6 +5,23 @@ import * as validators from "../validators";
 import { Question } from "../types/";
 
 class Controller {
+  private votes = async (question: Question) => {
+    // Get upvotes count
+    const upvotes = await prisma.questionVote.count({
+      where: { type: "UPVOTE", questionId: question.id },
+    });
+
+    // Get downvotes count
+    const downvotes = await prisma.questionVote.count({
+      where: { type: "DOWNVOTE", questionId: question.id },
+    });
+
+    //set the count of original question
+    question.votes = upvotes - downvotes;
+
+    return question;
+  };
+
   list = async (req: Request, res: Response) => {
     try {
       // Validation
@@ -26,11 +43,19 @@ class Controller {
         skip: query.skip,
         take: query.take,
         where: filters,
+        include: {
+          user: { select: { username: true, image: true, score: true } },
+        },
       });
+
+      // Set votes count
+      for (const question of questions) {
+        await this.votes(question);
+      }
 
       return res.status(200).json({
         count: await prisma.question.count({ where: filters }),
-        questions,
+        results: questions,
       });
     } catch (e) {
       return res.status(400).json(e);
@@ -74,7 +99,7 @@ class Controller {
         data,
       });
 
-      return res.status(200).json(question);
+      return res.status(200).json(await this.votes(question));
     } catch (e) {
       return res.status(400).json(e);
     }
