@@ -36,69 +36,6 @@ export const reshape = async (user: User) => {
   return user;
 };
 
-export const createUser = async (req: Request): Promise<User> => {
-  const schema = Joi.object<User>({
-    ...base,
-    username: Joi.string().min(2).max(32).required(),
-    email: Joi.string().min(6).required(),
-    password: Joi.string().min(6).max(32).required(),
-    score: Joi.number(),
-    role: Joi.string().valid("USER", "ADMIN"),
-  });
-
-  const data = await schema.validateAsync(req.body);
-
-  // Password hashing
-  data.password = await bcrypt.hash(data.password, 12);
-
-  // Set media fields
-  imageField(req, data);
-
-  return data;
-};
-
-export const updateUser = async (req: Request): Promise<User> => {
-  const schema = Joi.object<User>({
-    ...base,
-    username: Joi.string().min(2).max(32),
-    email: Joi.string().min(6),
-    isActive: Joi.boolean(),
-    score: Joi.number(),
-    role: Joi.string().valid("USER", "ADMIN"),
-  });
-
-  const data = await schema.validateAsync(req.body);
-
-  // Set media fields
-  imageField(req, data);
-
-  return data;
-};
-
-export const superAdmin = async (req: Request): Promise<User> => {
-  const schema = Joi.object<User>({
-    ...base,
-    username: Joi.string().min(2).max(32).required(),
-    email: Joi.string().min(2).required(),
-    password: Joi.string().min(6).required(),
-    isActive: Joi.boolean(),
-    score: Joi.number(),
-  });
-
-  const data = await schema.validateAsync(req.body);
-
-  // Password hashing
-  data.password = await bcrypt.hash(data.password, 12);
-
-  // Set the role
-  data.role = "SUPERADMIN";
-
-  // Set media fields
-  imageField(req, data);
-
-  return data;
-};
-
 export const register = async (req: Request): Promise<User> => {
   const schema = Joi.object<User>({
     ...base,
@@ -168,6 +105,71 @@ export const resetConfirm = async (req: Request): Promise<ResetConfirm> => {
   });
 
   return await schema.validateAsync(req.body);
+};
+
+// Super admin endpoints validation
+
+export const createUser = async (req: Request): Promise<User> => {
+  const schema = Joi.object<User>({
+    ...base,
+    username: Joi.string().min(2).max(32).required(),
+    email: Joi.string().min(6).required(),
+    password: Joi.string().min(6).max(32).required(),
+    score: Joi.number(),
+    role: Joi.string().valid("USER", "ADMIN"),
+  });
+
+  const data = await schema.validateAsync(req.body);
+
+  // Password hashing
+  data.password = await bcrypt.hash(data.password, 12);
+
+  // Set media fields
+  imageField(req, data);
+
+  return data;
+};
+
+export const updateUser = async (req: Request): Promise<User> => {
+  const schema = Joi.object<User>({
+    ...base,
+    username: Joi.string().min(2).max(32),
+    email: Joi.string().min(6),
+    isActive: Joi.boolean(),
+    score: Joi.number(),
+    role: Joi.string().valid("USER", "ADMIN"),
+  });
+
+  const data = await schema.validateAsync(req.body);
+
+  // Set media fields
+  imageField(req, data);
+
+  return data;
+};
+
+export const superAdmin = async (req: Request): Promise<User> => {
+  const schema = Joi.object<User>({
+    ...base,
+    username: Joi.string().min(2).max(32).required(),
+    email: Joi.string().min(2).required(),
+    password: Joi.string().min(6).required(),
+    isActive: Joi.boolean(),
+    score: Joi.number(),
+  });
+
+  const data = await schema.validateAsync(req.body);
+
+  // Password hashing
+  data.password = await bcrypt.hash(data.password, 12);
+
+  // Set the role
+  data.role = "SUPERADMIN";
+
+  // Set media fields
+  imageField(req, data);
+
+  return data;
 };
 
 // Query validator
