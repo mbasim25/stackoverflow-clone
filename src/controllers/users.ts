@@ -31,7 +31,7 @@ class Controller {
 
       return res.status(200).json({
         count: await prisma.user.count({ where: filters }),
-        users,
+        results: users,
       });
     } catch (e) {
       return res.status(400).json();

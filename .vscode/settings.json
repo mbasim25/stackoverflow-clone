@@ -12,10 +12,13 @@
     "**/dist": true
   },
   "cSpell.words": [
+    "SUPERADMIN",
     "ansvote",
     "answervote",
     "answervotes",
+    "downvotes",
     "questionvote",
-    "quesvote"
+    "quesvote",
+    "upvotes"
   ]
 }
