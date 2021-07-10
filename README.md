@@ -17,7 +17,7 @@ Starter template used in this project can be found [here].
 5. Joi
 6. AWS S3
 7. Nodemailer
-8. Jest/Supertest
+8. Jest/Supertest (still not done)
 
 ## What is the project about
 
@@ -25,7 +25,6 @@ Starter template used in this project can be found [here].
 - Questions and answers accept likes and comments
 - Profile image AWS S3 integration
 - A user has a score (still not done)
-- A user can’t upvote or downvote if they're not above certain level (still not done)
 - 3 types of users (user, admin, superadmin) with different permissions
 - Password Reset using Nodemailer and an OTP
 - Validation using joi
