@@ -119,7 +119,8 @@ class Controller {
         return res.status(404).json();
       }
 
-      // Delete
+      // * Cascade delete
+      await prisma.answerVote.deleteMany({ where: { answerId: id } });
       await prisma.answer.delete({ where: { id } });
 
       return res.status(204).json();

@@ -118,7 +118,26 @@ class Controller {
         return res.status(404).json();
       }
 
-      // Delete
+      // * Cascade delete
+
+      // question votes
+      await prisma.questionVote.deleteMany({
+        where: { questionId: id },
+      });
+
+      // answers votes
+      const answers = await prisma.answer.findMany({
+        where: { questionId: id },
+      });
+
+      for (const answer of answers) {
+        await prisma.answerVote.deleteMany({ where: { answerId: answer.id } });
+      }
+
+      // answers
+      await prisma.answer.deleteMany({ where: { questionId: id } });
+
+      // the question
       await prisma.question.delete({ where: { id } });
 
       return res.status(204).json();
