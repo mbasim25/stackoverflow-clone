@@ -6,7 +6,7 @@ Starter template used in this project can be found [here].
 
 1. **Agile software development**
 2. Types for each entity
-3. Unit testing for every feature(TDD)
+3. Unit testing for every feature
 
 ## Main Tools and packages
 
@@ -17,7 +17,7 @@ Starter template used in this project can be found [here].
 5. Joi
 6. AWS S3
 7. Nodemailer
-8. Jest/Supertest (still not done)
+8. Jest/Supertest
 
 ## What is the project about
 
@@ -27,6 +27,5 @@ Starter template used in this project can be found [here].
 - A user has a score (still not done)
 - 3 types of users (user, admin, superadmin) with different permissions
 - Password Reset using Nodemailer and an OTP
-- Validation using joi
 
 [here]: https://github.com/alimehasin/node-starter
