@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { prisma } from "../server";
 import Joi from "joi";
 import * as validators from "../validators";
-import { AnswerVote } from ".prisma/client";
+import { AnswerVote } from "../types";
 
 class Controller {
   create = async (req: Request, res: Response) => {

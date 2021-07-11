@@ -15,10 +15,12 @@ export const voteOwner = async (
     const user = await prisma.user.findUnique({ where: { id: requester.id } });
 
     // Find the vote
-    const quesvote = await prisma.questionVote.findUnique({ where: { id } });
-    const ansvote = await prisma.answerVote.findUnique({ where: { id } });
+    const questionvote = await prisma.questionVote.findUnique({
+      where: { id },
+    });
+    const answervote = await prisma.answerVote.findUnique({ where: { id } });
 
-    const vote = quesvote || ansvote;
+    const vote = questionvote || answervote;
 
     // Checking & Security
     if (!vote) {
