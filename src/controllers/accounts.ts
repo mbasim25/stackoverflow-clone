@@ -74,7 +74,7 @@ class Controller {
       });
 
       if (!user) {
-        return res.status(404).json("User not found");
+        return res.status(404).json();
       }
 
       // Assign tokens
@@ -121,20 +121,6 @@ class Controller {
       const data: User = await validators.updateAccount(req);
 
       const requester: any = req.user;
-
-      // Find user
-      const user = await prisma.user.findUnique({
-        where: {
-          id: requester.id,
-        },
-      });
-
-      // Security
-      if (!user) {
-        return res.status(404).json("user not found");
-      } else if (user.id !== requester.id) {
-        return res.status(403).json();
-      }
 
       // Update
       const updated: User = await prisma.user.update({
