@@ -4,7 +4,7 @@ import aws from "aws-sdk";
 import multer from "multer";
 import multerS3 from "multer-s3";
 
-// AWS S3 intgration for images
+// AWS S3 integration for images
 
 const bucketName = secrets.AWS_BUCKET_NAME;
 const accessKeyId = secrets.AWS_ACCESS_KEY;
