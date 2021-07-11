@@ -29,7 +29,7 @@ class Controller {
       const id = await Joi.string().validateAsync(req.params.id);
 
       // Update
-      const vote = await prisma.answer.update({
+      const vote = await prisma.answerVote.update({
         where: { id },
         data,
       });
