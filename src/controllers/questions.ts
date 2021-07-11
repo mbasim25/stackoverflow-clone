@@ -27,7 +27,7 @@ class Controller {
       // Validation
       const query = await validators.question.query(req);
 
-      // Filters object
+      // Filters
       const filters = {
         id: query.id,
         userId: query.userId,
@@ -85,14 +85,6 @@ class Controller {
       const data: Question = await validators.question.update(req);
       const id = await Joi.string().validateAsync(req.params.id);
 
-      // Find question
-      const unique = await prisma.question.findUnique({ where: { id } });
-
-      // Check if it exists
-      if (!unique) {
-        return res.status(404).json();
-      }
-
       // Update
       const question = await prisma.question.update({
         where: { id },
@@ -109,14 +101,6 @@ class Controller {
     try {
       // Validate the id
       const id = await Joi.string().validateAsync(req.params.id);
-
-      // Find question
-      const question = await prisma.question.findUnique({ where: { id } });
-
-      // Check if it exists
-      if (!question) {
-        return res.status(404).json();
-      }
 
       // * Cascade delete
 

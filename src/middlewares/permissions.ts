@@ -47,6 +47,11 @@ export const isOwnerOrAdmin = async (
     // Assign it to the object
     const object = question || answer;
 
+    // Check if it exists
+    if (!object) {
+      return res.status(404).json();
+    }
+
     // Check the role
     if (
       user.role !== "SUPERADMIN" &&
