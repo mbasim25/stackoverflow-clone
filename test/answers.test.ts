@@ -80,8 +80,9 @@ describe("Test Answers CRUD", () => {
   test("Test Answers LIST.", async () => {
     const count = await prisma.answer.count();
 
-    const token = await login("user1");
     // * LIST (Auth: user)
+    const token = await login("user1");
+
     res = await request.get("/answers").set("Authorization", `Bearer ${token}`);
 
     expect(res.status).toBe(200);
