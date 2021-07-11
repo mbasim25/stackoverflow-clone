@@ -9,6 +9,7 @@ import { secrets, mail } from "../utils";
 class Controller {
   registration = async (req: Request, res: Response) => {
     try {
+      console.log(req);
       // Validation
       const data = await validators.register(req);
 
@@ -17,6 +18,7 @@ class Controller {
 
       return res.status(201).json(await validators.reshape(user));
     } catch (e) {
+      console.log(e);
       return res.status(400).json(e);
     }
   };
