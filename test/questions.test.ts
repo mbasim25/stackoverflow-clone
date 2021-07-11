@@ -69,6 +69,7 @@ describe("Test Questions CRUD", () => {
   });
 
   test("Test Question LIST.", async () => {
+    const count = await prisma.question.count();
     const token = await login("user1");
     // * LIST (Auth: user)
     res = await request
@@ -78,12 +79,7 @@ describe("Test Questions CRUD", () => {
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty("count");
     expect(res.body).toHaveProperty("results");
-    expect(await prisma.question.count()).toBe(1);
-
-    // * LIST (Auth: non)
-    res = await request.get("/questions");
-
-    expect(res.status).toBe(200);
+    expect(await prisma.question.count()).toBe(count);
 
     const user = await prisma.user.findUnique({
       where: {
@@ -91,12 +87,19 @@ describe("Test Questions CRUD", () => {
       },
     });
 
+    // create a question
     await prisma.question.create({
       data: {
         userId: user.id,
         body: "newQ",
       },
     });
+
+    // * LIST (Auth: non)
+    res = await request.get("/questions");
+
+    expect(res.status).toBe(200);
+    expect(await prisma.question.count()).toBe(count + 1);
 
     // * Query by id
     const question = await prisma.question.findFirst({
@@ -106,11 +109,13 @@ describe("Test Questions CRUD", () => {
     res = await request.get(`/questions?id=${question.id}`);
 
     expect(res.status).toBe(200);
+    expect(res.body.count).toBe(1);
     expect(res.body.results[0]).toHaveProperty("body");
     expect(res.body.results[0]).toHaveProperty("userId");
   });
 
   test("Test Question CREATE.", async () => {
+    const count = await prisma.question.count();
     // *  find user
     const user = await prisma.user.findUnique({
       where: {
@@ -130,13 +135,11 @@ describe("Test Questions CRUD", () => {
     expect(res.body).toHaveProperty("userId");
     expect(res.body).toHaveProperty("id");
     expect(res.body).toHaveProperty("body");
-    expect(await prisma.question.count()).toBe(2);
+    expect(await prisma.question.count()).toBe(count + 1);
 
     // * Create (Auth: non)
     res = await request.post("/questions").send({ body: "question3" });
-
     expect(res.status).toBe(401);
-    expect(await prisma.question.count()).toBe(2);
 
     // * Try sending a user id with the request
     res = await request
@@ -199,6 +202,7 @@ describe("Test Questions CRUD", () => {
   });
 
   test("Test Question DESTROY.", async () => {
+    const count = await prisma.question.count();
     const token = await login("user1");
 
     // * Create question
@@ -208,7 +212,7 @@ describe("Test Questions CRUD", () => {
       .send({ body: "question2" });
 
     expect(res.status).toBe(201);
-    expect(await prisma.question.count()).toBe(2);
+    expect(await prisma.question.count()).toBe(count + 1);
 
     // * Delete (Auth: user)
     const token2 = await login("user2");
@@ -224,7 +228,7 @@ describe("Test Questions CRUD", () => {
       .set("Authorization", `Bearer ${token2}`);
 
     expect(res.status).toBe(403);
-    expect(await prisma.question.count()).toBe(2);
+    expect(await prisma.question.count()).toBe(count + 1);
 
     // * Delete (Auth: owner)
 
@@ -234,14 +238,14 @@ describe("Test Questions CRUD", () => {
       .set("Authorization", `Bearer ${token}`);
 
     expect(res.status).toBe(204);
-    expect(await prisma.question.count()).toBe(1);
+    expect(await prisma.question.count()).toBe(count);
 
     // * Delete a question that doesn't exists
     res = await request
       .delete(`/questions/${uuid()}`)
       .set("Authorization", `Bearer ${token}`);
     expect(res.status).toBe(400);
-    expect(await prisma.question.count()).toBe(1);
+    expect(await prisma.question.count()).toBe(count);
 
     // * Delete (Auth: admin)
     const token3 = await login("admin1");
@@ -257,6 +261,6 @@ describe("Test Questions CRUD", () => {
       .set("Authorization", `Bearer ${token3}`);
 
     expect(res.status).toBe(204);
-    expect(await prisma.question.count()).toBe(0);
+    expect(await prisma.question.count()).toBe(count - 1);
   });
 });
