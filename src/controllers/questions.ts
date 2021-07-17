@@ -53,6 +53,7 @@ class Controller {
               score: true,
             },
           },
+          answer: true,
         },
       });
 
