@@ -44,7 +44,15 @@ class Controller {
         take: query.take,
         where: filters,
         include: {
-          user: { select: { username: true, image: true, score: true } },
+          user: {
+            select: {
+              username: true,
+              firstName: true,
+              lastName: true,
+              image: true,
+              score: true,
+            },
+          },
         },
       });
 
