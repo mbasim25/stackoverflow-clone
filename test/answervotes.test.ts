@@ -120,8 +120,6 @@ describe("Test Answer Votes CRUD", () => {
       where: { answerId: answer.id },
     });
 
-    console.log(vote);
-
     // * Update (Auth: owner)
     res = await request
       .patch(`/answer/votes/${vote.id}`)

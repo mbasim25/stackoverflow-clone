@@ -196,8 +196,7 @@ describe("Test Questions CRUD", () => {
       .patch(`/questions/${uuid()}`)
       .set("Authorization", `Bearer ${token}`)
       .send({ body: "Something" });
-    // Validation for the id fails and throws 400 (uuid !== cuid)
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(404);
   });
 
   test("Test Question DESTROY.", async () => {
@@ -243,7 +242,7 @@ describe("Test Questions CRUD", () => {
     res = await request
       .delete(`/questions/${uuid()}`)
       .set("Authorization", `Bearer ${token}`);
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(404);
     expect(await prisma.question.count()).toBe(count);
 
     // * Delete (Auth: admin)

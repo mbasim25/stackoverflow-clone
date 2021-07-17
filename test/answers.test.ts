@@ -228,14 +228,13 @@ describe("Test Answers CRUD", () => {
       .set("Authorization", `Bearer ${token}`)
       .send({ body: "Something" });
     // Validation for the id fails and throws 400 (uuid !== cuid)
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(404);
 
     // * update an answer's question id
     res = await request
       .patch(`/answers/${answer.id}`)
       .set("Authorization", `Bearer ${token}`)
       .send({ questionId: uuid(), body: "Something" });
-    // Validation error
     expect(res.status).toBe(400);
   });
 
@@ -286,7 +285,7 @@ describe("Test Answers CRUD", () => {
     res = await request
       .delete(`/answers/${uuid()}`)
       .set("Authorization", `Bearer ${token}`);
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(404);
     expect(await prisma.answer.count()).toBe(count);
 
     // * Delete (Auth: admin)
