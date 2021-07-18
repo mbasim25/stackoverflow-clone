@@ -42,6 +42,7 @@ export const register = async (req: Request): Promise<User> => {
     username: Joi.string().min(2).max(32).required(),
     email: Joi.string().min(2).required(),
     password: Joi.string().min(8).required(),
+    fieldId: Joi.string().required(),
   });
   const data = await schema.validateAsync(req.body);
 
@@ -79,6 +80,7 @@ export const updateAccount = async (req: Request): Promise<User> => {
     ...base,
     username: Joi.string(),
     email: Joi.string().email(),
+    fieldId: Joi.string(),
   });
   const data = await schema.validateAsync(req.body);
 
