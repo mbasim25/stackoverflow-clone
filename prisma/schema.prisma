@@ -29,16 +29,20 @@ model User {
   QuestionVote QuestionVote[]
   AnswerVote   AnswerVote[]
   ResetToken   ResetToken[]
+  fieldId      String
+  field        Field          @relation(fields: [fieldId], references: [id])
 }
 
 model Question {
-  id     String         @id @default(cuid())
-  body   String
-  votes  Int            @default(0)
-  userId String
-  user   User           @relation(fields: [userId], references: [id])
-  answer Answer[]
-  Likes  QuestionVote[]
+  id      String         @id @default(cuid())
+  body    String
+  votes   Int            @default(0)
+  userId  String
+  user    User           @relation(fields: [userId], references: [id])
+  answer  Answer[]
+  Likes   QuestionVote[]
+  fieldId String
+  field   Field          @relation(fields: [fieldId], references: [id])
 }
 
 model Answer {
@@ -85,6 +89,14 @@ model ResetToken {
   user      User   @relation(fields: [userId], references: [id])
   email     String
   userId    String
+}
+
+// Aka categories
+model Field {
+  id       String     @id @default(cuid())
+  name     String     @unique
+  User     User[]
+  Question Question[]
 }
 
 // model QuesComment {
