@@ -16,6 +16,12 @@ const AWS_BUCKET_NAME = process.env.AWS_BUCKET_NAME;
 const email = process.env.email;
 const password = process.env.password;
 
+const SUPER_ADMIN = {
+  USER: process.env.SUPER_ADMIN_USER,
+  PASSWORD: process.env.SUPER_ADMIN_PASSWORD,
+  EMAIL: process.env.SUPER_ADMIN_EMAIL,
+};
+
 export {
   SECRET_KEY,
   PORT,
@@ -25,4 +31,5 @@ export {
   AWS_BUCKET_NAME,
   email,
   password,
+  SUPER_ADMIN,
 };
