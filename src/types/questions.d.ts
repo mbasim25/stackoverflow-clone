@@ -7,6 +7,9 @@ export interface Question extends BaseQuestion {}
 export interface QuestionFilter extends BasePagination {
   id: string;
   userId: string;
+  field: string;
+  title: string;
+  tags: string;
   minVotes: number;
   maxVotes: number;
   body: string;
