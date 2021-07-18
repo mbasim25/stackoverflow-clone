@@ -35,8 +35,11 @@ model User {
 
 model Question {
   id      String         @id @default(cuid())
+  title   String
   body    String
+  tags    String[]
   votes   Int            @default(0)
+  views   Int            @default(0)
   userId  String
   user    User           @relation(fields: [userId], references: [id])
   answer  Answer[]
