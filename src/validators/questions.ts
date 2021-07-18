@@ -3,18 +3,28 @@ import Joi from "joi";
 import { Question, QuestionFilter, QuestionVote } from "../types";
 import { pagination } from "./pagination";
 
-const base = { body: Joi.string().required() };
+const base = { tags: Joi.array().items(Joi.string()) };
 
 // Question create
 export const create = async (req: Request): Promise<Question> => {
-  const schema = Joi.object<Question>(base);
+  const schema = Joi.object<Question>({
+    ...base,
+    title: Joi.string().required(),
+    body: Joi.string().required(),
+    fieldId: Joi.string().required(),
+  });
 
   return await schema.validateAsync(req.body);
 };
 
 // Question update
 export const update = async (req: Request): Promise<Question> => {
-  const schema = Joi.object<Question>(base);
+  const schema = Joi.object<Question>({
+    ...base,
+    title: Joi.string(),
+    body: Joi.string(),
+    fieldId: Joi.string(),
+  });
 
   return await schema.validateAsync(req.body);
 };
@@ -28,6 +38,9 @@ export const query = async (req: Request): Promise<QuestionFilter> => {
     minVotes: Joi.number().allow(""),
     maxVotes: Joi.number().allow(""),
     body: Joi.string().allow(""),
+    field: Joi.string().allow(""),
+    title: Joi.string().allow(""),
+    tags: Joi.array().items(Joi.string().allow("")),
   });
 
   return await schema.validateAsync(req.query);
