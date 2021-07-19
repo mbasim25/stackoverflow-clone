@@ -9,6 +9,7 @@ import { secrets, mail } from "../utils";
 class Controller {
   registration = async (req: Request, res: Response) => {
     try {
+      // TODO: remove extra consol logs
       console.log(req);
       // Validation
       const data = await validators.register(req);

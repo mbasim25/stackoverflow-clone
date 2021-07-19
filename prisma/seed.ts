@@ -20,6 +20,7 @@ main()
     console.log(error);
     process.exit(1);
   })
-  .finally(() => {
-    prisma.$disconnect();
+  .finally(async () => {
+    console.log("Done Seeding");
+    await prisma.$disconnect();
   });
