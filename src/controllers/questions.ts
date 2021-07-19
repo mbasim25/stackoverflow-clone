@@ -5,7 +5,7 @@ import * as validators from "../validators";
 import { Question } from "../types/";
 
 class Controller {
-  private reshape = async (question: Question, id: boolean) => {
+  private votes = async (question: Question) => {
     // Get upvotes count
     const upvotes = await prisma.questionVote.count({
       where: { type: "UPVOTE", questionId: question.id },
@@ -18,14 +18,6 @@ class Controller {
 
     // set the count of original question
     question.votes = upvotes - downvotes;
-
-    // update views for a single question query
-    if (id) {
-      await prisma.question.update({
-        where: { id: question.id },
-        data: { views: question.views + 1 },
-      });
-    }
 
     return question;
   };
@@ -79,7 +71,7 @@ class Controller {
 
       // Set votes count
       for (const question of questions) {
-        await this.reshape(question, query.id ? true : false);
+        await this.votes(question);
       }
 
       return res.status(200).json({

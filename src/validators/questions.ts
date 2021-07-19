@@ -1,4 +1,5 @@
 import { Request } from "express";
+import { prisma } from "../server";
 import Joi from "joi";
 import { Question, QuestionFilter, QuestionVote } from "../types";
 import { pagination } from "./pagination";
@@ -44,6 +45,21 @@ export const query = async (req: Request): Promise<QuestionFilter> => {
     fieldId: Joi.string().allow(""),
     tags: Joi.array().items(Joi.string().allow("")),
   });
+
+  // TODO: make this a middleware
+  // update views for a single question query
+  const id: any = req.query.id;
+
+  if (id) {
+    // Find question
+    const question = await prisma.question.findUnique({ where: { id } });
+
+    // Update views count
+    await prisma.question.update({
+      where: { id },
+      data: { views: question.views + 1 },
+    });
+  }
 
   return await schema.validateAsync(req.query);
 };
