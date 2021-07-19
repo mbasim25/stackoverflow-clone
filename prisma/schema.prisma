@@ -13,6 +13,13 @@ enum Role {
   SUPERADMIN
 }
 
+enum Level {
+  JUNIOR
+  INTERMEDIATE
+  MIDLEVEL
+  SENIOR
+}
+
 model User {
   id           String         @id @default(cuid())
   username     String         @unique
@@ -24,6 +31,7 @@ model User {
   score        Int            @default(0)
   isActive     Boolean        @default(true)
   role         Role           @default(USER)
+  level        Level          @default(JUNIOR)
   Question     Question[]
   Answer       Answer[]
   QuestionVote QuestionVote[]
