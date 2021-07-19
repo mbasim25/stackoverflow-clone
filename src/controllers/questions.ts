@@ -5,7 +5,7 @@ import * as validators from "../validators";
 import { Question } from "../types/";
 
 class Controller {
-  private votes = async (question: Question) => {
+  private reshape = async (question: Question, id: boolean) => {
     // Get upvotes count
     const upvotes = await prisma.questionVote.count({
       where: { type: "UPVOTE", questionId: question.id },
@@ -19,6 +19,14 @@ class Controller {
     // set the count of original question
     question.votes = upvotes - downvotes;
 
+    // update views for a single question query
+    if (id) {
+      await prisma.question.update({
+        where: { id: question.id },
+        data: { views: question.views + 1 },
+      });
+    }
+
     return question;
   };
 
@@ -31,12 +39,24 @@ class Controller {
       const filters = {
         id: query.id,
         userId: query.userId,
+        fieldId: query.fieldId,
         votes: {
           lte: query.maxVotes,
           gte: query.minVotes,
         },
+        views: {
+          lte: query.maxViews,
+          gte: query.minViews,
+        },
+        title: { contains: query.title },
         body: { contains: query.body },
+        tags: { hasSome: query.tags },
       };
+
+      // Delete tags if non cus 'hasSome' throws an error
+      if (!query.tags) {
+        delete filters.tags;
+      }
 
       // Find questions
       const questions = await prisma.question.findMany({
@@ -59,7 +79,7 @@ class Controller {
 
       // Set votes count
       for (const question of questions) {
-        await this.votes(question);
+        await this.reshape(question, query.id ? true : false);
       }
 
       return res.status(200).json({
@@ -67,6 +87,7 @@ class Controller {
         results: questions,
       });
     } catch (e) {
+      console.log(e);
       return res.status(400).json(e);
     }
   };
@@ -100,7 +121,7 @@ class Controller {
         data,
       });
 
-      return res.status(200).json(await this.votes(question));
+      return res.status(200).json(question);
     } catch (e) {
       return res.status(400).json(e);
     }
