@@ -2,6 +2,9 @@
 CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN', 'SUPERADMIN');
 
 -- CreateEnum
+CREATE TYPE "Level" AS ENUM ('JUNIOR', 'INTERMEDIATE', 'MIDLEVEL', 'SENIOR');
+
+-- CreateEnum
 CREATE TYPE "VoteType" AS ENUM ('UPVOTE', 'DOWNVOTE');
 
 -- CreateTable
@@ -16,7 +19,11 @@ CREATE TABLE "User" (
     "score" INTEGER NOT NULL DEFAULT 0,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
     "role" "Role" NOT NULL DEFAULT E'USER',
-    "fieldId" TEXT NOT NULL,
+    "level" "Level" NOT NULL DEFAULT E'JUNIOR',
+    "yOfExperience" INTEGER NOT NULL DEFAULT 0,
+    "fieldId" TEXT,
+    "lat" DOUBLE PRECISION,
+    "lng" DOUBLE PRECISION,
 
     PRIMARY KEY ("id")
 );
@@ -103,7 +110,7 @@ CREATE UNIQUE INDEX "ResetToken.uniqueKey_unique" ON "ResetToken"("uniqueKey");
 CREATE UNIQUE INDEX "Field.name_unique" ON "Field"("name");
 
 -- AddForeignKey
-ALTER TABLE "User" ADD FOREIGN KEY ("fieldId") REFERENCES "Field"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "User" ADD FOREIGN KEY ("fieldId") REFERENCES "Field"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Question" ADD FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

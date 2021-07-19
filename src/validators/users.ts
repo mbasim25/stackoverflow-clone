@@ -15,6 +15,10 @@ const base = {
   firstName: Joi.string().allow(null),
   lastName: Joi.string().allow(null),
   image: Joi.string().allow(null),
+  yOfExperience: Joi.number(),
+  level: Joi.string().valid("JUNIOR", "INTERMEDIATE", "MIDLEVEL", "SENIOR"),
+  lat: Joi.number(),
+  lng: Joi.number(),
 };
 
 const imageField = (req: Request, data: User): User => {
@@ -116,6 +120,7 @@ export const createUser = async (req: Request): Promise<User> => {
     ...base,
     username: Joi.string().min(2).max(32).required(),
     email: Joi.string().min(6).required(),
+    fieldId: Joi.string(),
     password: Joi.string().min(6).max(32).required(),
     score: Joi.number(),
     role: Joi.string().valid("USER", "ADMIN"),
@@ -137,6 +142,7 @@ export const updateUser = async (req: Request): Promise<User> => {
     ...base,
     username: Joi.string().min(2).max(32),
     email: Joi.string().min(6),
+    fieldId: Joi.string(),
     isActive: Joi.boolean(),
     score: Joi.number(),
     role: Joi.string().valid("USER", "ADMIN"),
@@ -181,7 +187,10 @@ export const query = async (req: Request): Promise<UserQuery> => {
     id: Joi.string().allow(""),
     username: Joi.string().allow(""),
     email: Joi.string().allow(""),
+    fieldId: Joi.string().allow(""),
     role: Joi.string().valid("USER", "ADMIN"),
+    yOfExperience: Joi.number().allow(""),
+    level: Joi.string().valid("JUNIOR", "INTERMEDIATE", "MIDLEVEL", "SENIOR"),
     isActive: Joi.boolean(),
   });
 
