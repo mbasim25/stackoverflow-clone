@@ -32,7 +32,7 @@ model User {
   isActive      Boolean        @default(true)
   role          Role           @default(USER)
   level         Level          @default(JUNIOR)
-  yOfExperiance Int            @default(0)
+  yOfExperience Int            @default(0)
   Question      Question[]
   Answer        Answer[]
   QuestionVote  QuestionVote[]
