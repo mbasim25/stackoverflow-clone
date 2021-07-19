@@ -37,9 +37,11 @@ export const query = async (req: Request): Promise<QuestionFilter> => {
     userId: Joi.string().allow(""),
     minVotes: Joi.number().allow(""),
     maxVotes: Joi.number().allow(""),
-    body: Joi.string().allow(""),
-    field: Joi.string().allow(""),
+    minViews: Joi.number().allow(""),
+    maxViews: Joi.number().allow(""),
     title: Joi.string().allow(""),
+    body: Joi.string().allow(""),
+    fieldId: Joi.string().allow(""),
     tags: Joi.array().items(Joi.string().allow("")),
   });
 
