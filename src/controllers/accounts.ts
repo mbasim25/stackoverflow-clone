@@ -134,19 +134,6 @@ class Controller {
     }
   };
 
-  // TODO: make super admin a seed data and not a controller
-  super = async (req: Request, res: Response) => {
-    try {
-      const data = await validators.superAdmin(req);
-
-      const superadmin = await prisma.user.create({ data });
-
-      return res.status(200).json(superadmin);
-    } catch (e) {
-      return res.status(400).json(e);
-    }
-  };
-
   passwordChange = async (req: Request, res: Response) => {
     try {
       const requester: any = req.user;
