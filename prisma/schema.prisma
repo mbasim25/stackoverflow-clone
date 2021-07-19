@@ -21,24 +21,27 @@ enum Level {
 }
 
 model User {
-  id           String         @id @default(cuid())
-  username     String         @unique
-  email        String?        @unique
-  firstName    String?
-  lastName     String?
-  image        String?
-  password     String
-  score        Int            @default(0)
-  isActive     Boolean        @default(true)
-  role         Role           @default(USER)
-  level        Level          @default(JUNIOR)
-  Question     Question[]
-  Answer       Answer[]
-  QuestionVote QuestionVote[]
-  AnswerVote   AnswerVote[]
-  ResetToken   ResetToken[]
-  fieldId      String
-  field        Field          @relation(fields: [fieldId], references: [id])
+  id            String         @id @default(cuid())
+  username      String         @unique
+  email         String?        @unique
+  firstName     String?
+  lastName      String?
+  image         String?
+  password      String
+  score         Int            @default(0)
+  isActive      Boolean        @default(true)
+  role          Role           @default(USER)
+  level         Level          @default(JUNIOR)
+  yOfExperiance Int            @default(0)
+  Question      Question[]
+  Answer        Answer[]
+  QuestionVote  QuestionVote[]
+  AnswerVote    AnswerVote[]
+  ResetToken    ResetToken[]
+  fieldId       String?
+  field         Field?         @relation(fields: [fieldId], references: [id])
+  lat           Float?
+  lng           Float?
 }
 
 model Question {
