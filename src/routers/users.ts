@@ -10,7 +10,7 @@ const router = Router();
 router.use(passport.authenticate("jwt", { session: false }));
 router.use(isSuper);
 
-//CRUD for the super admin
+// CRUD for the super admin
 
 // View a list of all the users in the db
 router.get("/", controller.list);

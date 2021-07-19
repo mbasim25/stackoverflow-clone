@@ -16,9 +16,6 @@ router.post("/tokens/refresh", controller.refreshToken);
 router.post("/passwords/email", controller.resetEmail);
 router.patch("/passwords/reset", controller.resetConfirm);
 
-// Super admin for development only
-router.post("/super", controller.super);
-
 // JWT required for all the endpoints below
 router.use(passport.authenticate("jwt", { session: false }));
 
