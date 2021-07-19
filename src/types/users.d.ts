@@ -9,7 +9,8 @@ export interface UserQuery extends BasePagination {
   email: string;
   role: "USER" | "ADMIN";
   isActive: boolean;
-  yOfExperience: number;
+  minYOE: number;
+  maxYOE: number;
   level: "JUNIOR" | "INTERMEDIATE" | "MIDLEVEL" | "SENIOR";
   fieldId: string;
 }

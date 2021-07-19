@@ -189,7 +189,8 @@ export const query = async (req: Request): Promise<UserQuery> => {
     email: Joi.string().allow(""),
     fieldId: Joi.string().allow(""),
     role: Joi.string().valid("USER", "ADMIN"),
-    yOfExperience: Joi.number().allow(""),
+    minYOE: Joi.number().allow(""),
+    maxYOE: Joi.number().allow(""),
     level: Joi.string().valid("JUNIOR", "INTERMEDIATE", "MIDLEVEL", "SENIOR"),
     isActive: Joi.boolean(),
   });
