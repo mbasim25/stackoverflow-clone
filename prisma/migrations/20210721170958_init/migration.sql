@@ -37,7 +37,7 @@ CREATE TABLE "Question" (
     "votes" INTEGER NOT NULL DEFAULT 0,
     "views" INTEGER NOT NULL DEFAULT 0,
     "userId" TEXT NOT NULL,
-    "fieldId" TEXT NOT NULL,
+    "fieldId" TEXT,
 
     PRIMARY KEY ("id")
 );
@@ -87,6 +87,9 @@ CREATE TABLE "ResetToken" (
 CREATE TABLE "Field" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
+    "deactivaterId" TEXT,
+    "activatorId" TEXT,
+    "reason" TEXT,
 
     PRIMARY KEY ("id")
 );
@@ -116,7 +119,7 @@ ALTER TABLE "User" ADD FOREIGN KEY ("fieldId") REFERENCES "Field"("id") ON DELET
 ALTER TABLE "Question" ADD FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Question" ADD FOREIGN KEY ("fieldId") REFERENCES "Field"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Question" ADD FOREIGN KEY ("fieldId") REFERENCES "Field"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Answer" ADD FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -138,3 +141,9 @@ ALTER TABLE "AnswerVote" ADD FOREIGN KEY ("answerId") REFERENCES "Answer"("id") 
 
 -- AddForeignKey
 ALTER TABLE "ResetToken" ADD FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Field" ADD FOREIGN KEY ("deactivaterId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Field" ADD FOREIGN KEY ("activatorId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;

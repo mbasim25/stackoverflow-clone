@@ -42,6 +42,8 @@ model User {
   field         Field?         @relation(fields: [fieldId], references: [id])
   lat           Float?
   lng           Float?
+  fieldDelete   Field[]        @relation("fieldDelete")
+  fieldRetrieve Field[]        @relation("fieldRetrieve")
 }
 
 model Question {
@@ -55,8 +57,8 @@ model Question {
   user    User           @relation(fields: [userId], references: [id])
   answer  Answer[]
   Likes   QuestionVote[]
-  fieldId String
-  field   Field          @relation(fields: [fieldId], references: [id])
+  fieldId String?
+  field   Field?         @relation(fields: [fieldId], references: [id])
 }
 
 model Answer {
@@ -107,10 +109,15 @@ model ResetToken {
 
 // Aka categories
 model Field {
-  id       String     @id @default(cuid())
-  name     String     @unique
-  User     User[]
-  Question Question[]
+  id             String     @id @default(cuid())
+  name           String     @unique
+  User           User[]
+  Question       Question[]
+  deactivaterId  String?
+  deactivateddBy User?      @relation("fieldDelete", fields: [deactivaterId], references: [id])
+  activatorId    String?
+  activatedBy    User?      @relation("fieldRetrieve", fields: [activatorId], references: [id])
+  reason         String?
 }
 
 // model QuesComment {
