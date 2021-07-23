@@ -12,7 +12,7 @@ export const create = async (req: Request): Promise<Question> => {
     ...base,
     title: Joi.string().required(),
     body: Joi.string().required(),
-    fieldId: Joi.string().required(),
+    fieldId: Joi.string(),
   });
 
   return await schema.validateAsync(req.body);
