@@ -47,6 +47,7 @@ describe("Test Answer Votes CRUD", () => {
     const question = await prisma.question.create({
       data: {
         userId: user.id,
+        title: "newQ",
         body: "question1",
       },
     });
