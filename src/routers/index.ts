@@ -5,6 +5,7 @@ import questions from "./questions";
 import answers from "./answers";
 import questionVotes from "./questionvotes";
 import answerVotes from "./answervotes";
+import fields from "./fields";
 
 const router = Router();
 
@@ -15,5 +16,6 @@ router.use("/questions", questions);
 router.use("/answers", answers);
 router.use("/question/votes", questionVotes);
 router.use("/answer/votes", answerVotes);
+router.use("/fields", fields);
 
 export default router;
