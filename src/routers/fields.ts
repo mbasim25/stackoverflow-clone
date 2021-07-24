@@ -23,4 +23,13 @@ router.patch("/:id", controller.update);
 // Delete
 router.delete("/:id", controller.destroy);
 
+// * Auth(admin)
+router.use(isAdmin);
+
+// Activate field
+router.post("/activate/:id", controller.activate);
+
+// Deactivate field
+router.post("/deactivate/:id", controller.deactivate);
+
 export default router;
