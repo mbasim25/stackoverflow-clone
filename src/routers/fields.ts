@@ -8,4 +8,19 @@ const router = Router();
 // List
 router.get("/", safe, controller.list);
 
+// JWT
+router.use(passport.authenticate("jwt", { session: false }));
+
+//* Auth(superadmin)
+router.use(isSuper);
+
+// Create
+router.post("/", controller.create);
+
+// Update
+router.patch("/:id", controller.update);
+
+// // Delete
+// router.delete("/:id", controller.destroy);
+
 export default router;

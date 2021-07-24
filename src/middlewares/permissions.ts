@@ -25,6 +25,7 @@ export const isSuper = async (
     return res.status(400).json();
   }
 };
+
 // Router level middleware to check if the user role is super admin or admin
 export const isAdmin = async (
   req: Request,
