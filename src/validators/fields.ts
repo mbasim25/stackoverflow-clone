@@ -23,11 +23,20 @@ export const update = async (req: Request): Promise<Field> => {
 };
 
 // Filters
-export const query = async (req: Request): Promise<FieldFilter> => {
+export const query = async (
+  req: Request,
+  safe: boolean
+): Promise<FieldFilter> => {
+  // Only return deactivated fields if admin or super
+  if (!safe) {
+    req.query.deactivaterId = null;
+  }
+
   const schema = Joi.object<FieldFilter>({
     ...pagination,
     id: Joi.string().allow(""),
     name: Joi.string().allow(""),
+    deactivaterId: Joi.string().allow("", null),
   });
 
   return await schema.validateAsync(req.query);
