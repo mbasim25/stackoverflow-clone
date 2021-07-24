@@ -6,4 +6,5 @@ export interface Field extends BaseField {}
 export interface FieldFilter extends BasePagination {
   id: string;
   name: string;
+  deactivaterId: string;
 }
