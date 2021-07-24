@@ -322,4 +322,39 @@ describe("Test Fields CRUD", () => {
       .send({ reason: "already checked and ready to be activated" });
     expect(res.status).toBe(200);
   });
+
+  test("Test Field Deactivate", async () => {
+    const token = await login("user1");
+    const field = await prisma.field.findFirst();
+
+    // Deactivate (Auth: User)
+    res = await request
+      .post(`/fields/deactivate/${field.id}`)
+      .set("Authorization", `Bearer ${token}`)
+      .send({ reason: "this field is no longer relevant" });
+    expect(res.status).toBe(404);
+
+    // Deactivate (Auth: Admin)
+    const adminToken = await login("admin1");
+    const admin = await prisma.user.findFirst({
+      where: { username: "admin1" },
+    });
+
+    res = await request
+      .post(`/fields/deactivate/${field.id}`)
+      .set("Authorization", `Bearer ${adminToken}`)
+      .send({ reason: "this field is no longer relevant" });
+    expect(res.status).toBe(200);
+    expect(res.body.deactivaterId).toEqual(admin.id);
+    expect(res.body.activatorId).toEqual(null);
+
+    // Deactivate (Auth: Superadmin)
+    const superToken = await login("super");
+
+    res = await request
+      .post(`/fields/deactivate/${field.id}`)
+      .set("Authorization", `Bearer ${superToken}`)
+      .send({ reason: "this field name needs a spelling check" });
+    expect(res.status).toBe(200);
+  });
 });
