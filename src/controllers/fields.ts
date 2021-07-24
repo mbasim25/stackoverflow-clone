@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { prisma } from "../server";
+import Joi from "joi";
 import * as validators from "../validators";
 import { Field, FieldFilter } from "../types/";
 
@@ -41,6 +42,38 @@ class Controller {
         count: await prisma.field.count({ where: filters }),
         results: fields,
       });
+    } catch (e) {
+      return res.status(400).json(e);
+    }
+  };
+
+  create = async (req: Request, res: Response) => {
+    try {
+      // Validation
+      const data: Field = await validators.field.create(req);
+
+      // Create
+      const field = await prisma.field.create({ data });
+
+      return res.status(201).json(field);
+    } catch (e) {
+      return res.status(400).json(e);
+    }
+  };
+
+  update = async (req: Request, res: Response) => {
+    try {
+      // Validation
+      const data: Field = await validators.field.update(req);
+      const id = await Joi.string().validateAsync(req.params.id);
+
+      // Update
+      const field = await prisma.field.update({
+        where: { id },
+        data,
+      });
+
+      return res.status(200).json(field);
     } catch (e) {
       return res.status(400).json(e);
     }
