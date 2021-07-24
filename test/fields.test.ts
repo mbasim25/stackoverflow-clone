@@ -25,12 +25,20 @@ describe("Test Fields CRUD", () => {
   });
 
   beforeEach(async () => {
+    // field 1
+    const field = await prisma.field.create({
+      data: {
+        name: "new field",
+      },
+    });
+
     // user 1
     const user = await prisma.user.create({
       data: {
         username: "user1",
         password: await bcrypt.hash("password123", 12),
         email: "u@gmail.com",
+        fieldId: field.id,
       },
     });
 
@@ -63,10 +71,12 @@ describe("Test Fields CRUD", () => {
       },
     });
 
-    // field 1
-    const field = await prisma.field.create({
+    await prisma.question.create({
       data: {
-        name: "new field",
+        userId: user.id,
+        body: "q1",
+        title: "q1",
+        fieldId: field.id,
       },
     });
   });
@@ -217,5 +227,64 @@ describe("Test Fields CRUD", () => {
       .set("Authorization", `Bearer ${superToken}`)
       .send({ name: "updated?", id: "gj21223131" });
     expect(res.status).toBe(400);
+  });
+
+  test("Test Field Delete.", async () => {
+    const count = await prisma.field.count();
+    const field = await prisma.field.findFirst();
+
+    //* Delete (Auth: Non)
+
+    res = await request.delete(`/fields/${field.id}`);
+    expect(res.status).toBe(401);
+
+    //* Delete (Auth: User)
+    const token = await login("user1");
+
+    res = await request
+      .delete(`/fields/${field.id}`)
+      .set("Authorization", `Bearer ${token}`);
+    expect(res.status).toBe(404);
+
+    //* Delete (Auth: Admin)
+    const adminToken = await login("admin1");
+
+    res = await request
+      .delete(`/fields/${field.id}`)
+      .set("Authorization", `Bearer ${adminToken}`);
+    expect(res.status).toBe(404);
+    expect(await prisma.field.count()).toBe(count);
+
+    //* Try to delete a field that doesn't exist
+    const superToken = await login("super");
+
+    res = await request
+      .delete(`/fields/${uuid()}`)
+      .set("Authorization", `Bearer ${superToken}`);
+    // (Id validation error)
+    expect(res.status).toBe(400);
+
+    //* Delete (Auth: Superadmin)
+
+    // connected user & question
+    const user = await prisma.user.findFirst({ where: { username: "user1" } });
+    const question = await prisma.question.findFirst();
+    expect(question.fieldId).toEqual(field.id);
+    expect(user.fieldId).toEqual(field.id);
+
+    // Delete
+    res = await request
+      .delete(`/fields/${field.id}`)
+      .set("Authorization", `Bearer ${superToken}`);
+    expect(res.status).toBe(204);
+    expect(await prisma.field.count()).toBe(count - 1);
+
+    // Check the relations after delete
+    const samequestion = await prisma.question.findFirst();
+    const sameuser = await prisma.user.findFirst({
+      where: { username: "user1" },
+    });
+    expect(samequestion.fieldId).toEqual(null);
+    expect(sameuser.fieldId).toEqual(null);
   });
 });
