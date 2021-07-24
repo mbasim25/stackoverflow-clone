@@ -120,4 +120,102 @@ describe("Test Fields CRUD", () => {
     expect(res.body.results[0]).toHaveProperty("activatorId");
     expect(res.body.results[0]).toHaveProperty("reason");
   });
+
+  test("Test Field CREATE.", async () => {
+    const count = await prisma.field.count();
+
+    // * Create (Auth: non)
+
+    res = await request.post("/fields").send({ name: "Field2" });
+    expect(res.status).toBe(401);
+
+    // * Create (Auth: User)
+    const token = await login("user1");
+
+    res = await request
+      .post("/fields")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ name: "Field1" });
+
+    expect(res.status).toBe(404);
+    expect(await prisma.field.count()).toBe(count);
+
+    // * Create (Auth: Admin)
+    const adminToken = await login("admin1");
+
+    res = await request
+      .post("/fields")
+      .set("Authorization", `Bearer ${adminToken}`)
+      .send({ name: "Field1" });
+
+    expect(res.status).toBe(404);
+    expect(await prisma.field.count()).toBe(count);
+
+    // * Create (Auth: Superadmin)
+    const superToken = await login("super");
+
+    res = await request
+      .post("/fields")
+      .set("Authorization", `Bearer ${superToken}`)
+      .send({ name: "Field1" });
+
+    expect(res.status).toBe(201);
+    expect(res.body).toHaveProperty("name");
+    expect(res.body).toHaveProperty("id");
+    expect(await prisma.field.count()).toBe(count + 1);
+  });
+
+  test("Test Field Update.", async () => {
+    const field = await prisma.field.findFirst();
+
+    //* Update (Auth: Non)
+
+    res = await request.patch(`/fields/${field.id}`).send({ name: "updated?" });
+    expect(res.status).toBe(401);
+
+    //* Update (Auth: User)
+    const token = await login("user1");
+
+    res = await request
+      .patch(`/fields/${field.id}`)
+      .set("Authorization", `Bearer ${token}`)
+      .send({ name: "updated?" });
+    expect(res.status).toBe(404);
+
+    //* Update (Auth: Admin)
+    const adminToken = await login("admin1");
+
+    res = await request
+      .patch(`/fields/${field.id}`)
+      .set("Authorization", `Bearer ${adminToken}`)
+      .send({ name: "updated?" });
+    expect(res.status).toBe(404);
+
+    //* Update (Auth: Superadmin)
+    const superToken = await login("super");
+
+    res = await request
+      .patch(`/fields/${field.id}`)
+      .set("Authorization", `Bearer ${superToken}`)
+      .send({ name: "updated?" });
+    expect(res.status).toBe(200);
+    expect(res.body.name).toEqual("updated?");
+
+    //* Try to update a field that doesn't exist
+
+    res = await request
+      .patch(`/fields/${uuid()}`)
+      .set("Authorization", `Bearer ${superToken}`)
+      .send({ name: "updated?" });
+    // (Id validation error)
+    expect(res.status).toBe(400);
+
+    //* Try to update the field id
+
+    res = await request
+      .patch(`/fields/${field.id}`)
+      .set("Authorization", `Bearer ${superToken}`)
+      .send({ name: "updated?", id: "gj21223131" });
+    expect(res.status).toBe(400);
+  });
 });
