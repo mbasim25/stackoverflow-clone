@@ -26,6 +26,8 @@
     "downvotes",
     "questionvote",
     "quesvote",
+    "samequestion",
+    "sameuser",
     "upvotes"
   ]
 }

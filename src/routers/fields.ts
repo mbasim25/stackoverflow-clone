@@ -20,7 +20,7 @@ router.post("/", controller.create);
 // Update
 router.patch("/:id", controller.update);
 
-// // Delete
-// router.delete("/:id", controller.destroy);
+// Delete
+router.delete("/:id", controller.destroy);
 
 export default router;
