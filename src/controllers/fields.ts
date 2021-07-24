@@ -26,13 +26,14 @@ class Controller {
   list = async (req: Request, res: Response) => {
     try {
       // Validation
-      const query: FieldFilter = await validators.field.query(req);
       const safe = res.locals.safe;
+      const query: FieldFilter = await validators.field.query(req, safe);
 
       // Filters
       const filters = {
         id: query.id,
         name: query.name,
+        deactivaterId: query.deactivaterId,
       };
 
       // Find
@@ -54,6 +55,7 @@ class Controller {
         results: fields,
       });
     } catch (e) {
+      console.log(e);
       return res.status(400).json(e);
     }
   };
@@ -102,6 +104,46 @@ class Controller {
       await prisma.field.delete({ where: { id } });
 
       return res.status(204).json();
+    } catch (e) {
+      return res.status(400).json(e);
+    }
+  };
+
+  activate = async (req: Request, res: Response) => {
+    try {
+      // Validation
+      const id = req.params.id;
+      const user: any = req.user;
+      await this.checkId(id);
+      const data = await validators.field.activations(req);
+
+      // activate
+      const field = await prisma.field.update({
+        where: { id },
+        data: { ...data, activatorId: user.id, deactivaterId: null },
+      });
+
+      return res.status(200).json(field);
+    } catch (e) {
+      return res.status(400).json(e);
+    }
+  };
+
+  deactivate = async (req: Request, res: Response) => {
+    try {
+      // Validation
+      const id = req.params.id;
+      const user: any = req.user;
+      await this.checkId(id);
+      const data = await validators.field.activations(req);
+
+      // Deactivate
+      const field = await prisma.field.update({
+        where: { id },
+        data: { ...data, deactivaterId: user.id, activatorId: null },
+      });
+
+      return res.status(200).json(field);
     } catch (e) {
       return res.status(400).json(e);
     }
