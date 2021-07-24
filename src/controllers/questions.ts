@@ -45,7 +45,7 @@ class Controller {
         tags: { hasSome: query.tags },
       };
 
-      // Delete tags if non cus 'hasSome' throws an error
+      // Delete tags if non, cus 'hasSome' throws an error
       if (!query.tags) {
         delete filters.tags;
       }
