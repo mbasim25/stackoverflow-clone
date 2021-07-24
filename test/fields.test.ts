@@ -287,4 +287,39 @@ describe("Test Fields CRUD", () => {
     expect(samequestion.fieldId).toEqual(null);
     expect(sameuser.fieldId).toEqual(null);
   });
+
+  test("Test Field Activate", async () => {
+    const token = await login("user1");
+    const field = await prisma.field.findFirst();
+
+    // Activate (Auth: User)
+    res = await request
+      .post(`/fields/activate/${field.id}`)
+      .set("Authorization", `Bearer ${token}`)
+      .send({ reason: "already checked and ready to be activated" });
+    expect(res.status).toBe(404);
+
+    // Activate (Auth: Admin)
+    const adminToken = await login("admin1");
+    const admin = await prisma.user.findFirst({
+      where: { username: "admin1" },
+    });
+
+    res = await request
+      .post(`/fields/activate/${field.id}`)
+      .set("Authorization", `Bearer ${adminToken}`)
+      .send({ reason: "already checked and ready to be activated" });
+    expect(res.status).toBe(200);
+    expect(res.body.deactivaterId).toEqual(null);
+    expect(res.body.activatorId).toEqual(admin.id);
+
+    // Activate (Auth: Superadmin)
+    const superToken = await login("super");
+
+    res = await request
+      .post(`/fields/activate/${field.id}`)
+      .set("Authorization", `Bearer ${superToken}`)
+      .send({ reason: "already checked and ready to be activated" });
+    expect(res.status).toBe(200);
+  });
 });
