@@ -12,6 +12,17 @@ class Controller {
     return field;
   };
 
+  private checkId = async (id: string) => {
+    await Joi.string().validateAsync(id);
+    const field = await prisma.field.findUnique({ where: { id } });
+
+    if (!field) {
+      throw new Error("Not found");
+    }
+
+    return id;
+  };
+
   list = async (req: Request, res: Response) => {
     try {
       // Validation
@@ -65,7 +76,9 @@ class Controller {
     try {
       // Validation
       const data: Field = await validators.field.update(req);
-      const id = await Joi.string().validateAsync(req.params.id);
+      const id = req.params.id;
+
+      await this.checkId(id);
 
       // Update
       const field = await prisma.field.update({
@@ -74,6 +87,21 @@ class Controller {
       });
 
       return res.status(200).json(field);
+    } catch (e) {
+      return res.status(400).json(e);
+    }
+  };
+
+  destroy = async (req: Request, res: Response) => {
+    try {
+      // Validate the id
+      const id = req.params.id;
+      await this.checkId(id);
+
+      // Delete
+      await prisma.field.delete({ where: { id } });
+
+      return res.status(204).json();
     } catch (e) {
       return res.status(400).json(e);
     }
