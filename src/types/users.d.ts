@@ -9,6 +9,10 @@ export interface UserQuery extends BasePagination {
   email: string;
   role: "USER" | "ADMIN";
   isActive: boolean;
+  minYOE: number;
+  maxYOE: number;
+  level: "JUNIOR" | "INTERMEDIATE" | "MIDLEVEL" | "SENIOR";
+  fieldId: string;
 }
 
 // Password update when authenticated and the old password is known

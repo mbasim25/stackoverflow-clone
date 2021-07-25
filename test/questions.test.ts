@@ -57,6 +57,7 @@ describe("Test Questions CRUD", () => {
     await prisma.question.create({
       data: {
         userId: user.id,
+        title: "newQ",
         body: "first question",
       },
     });
@@ -90,6 +91,7 @@ describe("Test Questions CRUD", () => {
     await prisma.question.create({
       data: {
         userId: user.id,
+        title: "newQ",
         body: "newQ",
       },
     });
@@ -128,23 +130,26 @@ describe("Test Questions CRUD", () => {
     res = await request
       .post("/questions")
       .set("Authorization", `Bearer ${token}`)
-      .send({ body: "question2" });
+      .send({ body: "question2", title: "newQ" });
 
     expect(res.status).toBe(201);
     expect(res.body).toHaveProperty("userId");
     expect(res.body).toHaveProperty("id");
     expect(res.body).toHaveProperty("body");
+    expect(res.body).toHaveProperty("title");
     expect(await prisma.question.count()).toBe(count + 1);
 
     // * Create (Auth: non)
-    res = await request.post("/questions").send({ body: "question3" });
+    res = await request
+      .post("/questions")
+      .send({ body: "question3", title: "newQ" });
     expect(res.status).toBe(401);
 
     // * Try sending a user id with the request
     res = await request
       .post("/questions")
       .set("Authorization", `Bearer ${token}`)
-      .send({ userId: user.id, body: "question3" });
+      .send({ userId: user.id, body: "question3", title: "newQ" });
 
     expect(res.status).toBe(400);
     expect(await prisma.question.count()).toBe(2);
@@ -195,7 +200,7 @@ describe("Test Questions CRUD", () => {
     res = await request
       .patch(`/questions/${uuid()}`)
       .set("Authorization", `Bearer ${token}`)
-      .send({ body: "Something" });
+      .send({ body: "Something", title: "newQ" });
     expect(res.status).toBe(404);
   });
 
@@ -207,7 +212,7 @@ describe("Test Questions CRUD", () => {
     res = await request
       .post("/questions")
       .set("Authorization", `Bearer ${token}`)
-      .send({ body: "question2" });
+      .send({ title: "newQ", body: "question2" });
 
     expect(res.status).toBe(201);
     expect(await prisma.question.count()).toBe(count + 1);

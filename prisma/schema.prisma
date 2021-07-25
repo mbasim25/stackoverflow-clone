@@ -13,32 +13,52 @@ enum Role {
   SUPERADMIN
 }
 
+enum Level {
+  JUNIOR
+  INTERMEDIATE
+  MIDLEVEL
+  SENIOR
+}
+
 model User {
-  id           String         @id @default(cuid())
-  username     String         @unique
-  email        String?        @unique
-  firstName    String?
-  lastName     String?
-  image        String?
-  password     String
-  score        Int            @default(0)
-  isActive     Boolean        @default(true)
-  role         Role           @default(USER)
-  Question     Question[]
-  Answer       Answer[]
-  QuestionVote QuestionVote[]
-  AnswerVote   AnswerVote[]
-  ResetToken   ResetToken[]
+  id            String         @id @default(cuid())
+  username      String         @unique
+  email         String?        @unique
+  firstName     String?
+  lastName      String?
+  image         String?
+  password      String
+  score         Int            @default(0)
+  isActive      Boolean        @default(true)
+  role          Role           @default(USER)
+  level         Level          @default(JUNIOR)
+  yOfExperience Int            @default(0)
+  Question      Question[]
+  Answer        Answer[]
+  QuestionVote  QuestionVote[]
+  AnswerVote    AnswerVote[]
+  ResetToken    ResetToken[]
+  fieldId       String?
+  field         Field?         @relation(fields: [fieldId], references: [id])
+  lat           Float?
+  lng           Float?
+  fieldDelete   Field[]        @relation("fieldDelete")
+  fieldRetrieve Field[]        @relation("fieldRetrieve")
 }
 
 model Question {
-  id     String         @id @default(cuid())
-  body   String
-  votes  Int            @default(0)
-  userId String
-  user   User           @relation(fields: [userId], references: [id])
-  answer Answer[]
-  Likes  QuestionVote[]
+  id      String         @id @default(cuid())
+  title   String
+  body    String
+  tags    String[]
+  votes   Int            @default(0)
+  views   Int            @default(0)
+  userId  String
+  user    User           @relation(fields: [userId], references: [id])
+  answer  Answer[]
+  Likes   QuestionVote[]
+  fieldId String?
+  field   Field?         @relation(fields: [fieldId], references: [id])
 }
 
 model Answer {
@@ -85,6 +105,19 @@ model ResetToken {
   user      User   @relation(fields: [userId], references: [id])
   email     String
   userId    String
+}
+
+// Aka categories
+model Field {
+  id             String     @id @default(cuid())
+  name           String     @unique
+  User           User[]
+  Question       Question[]
+  deactivaterId  String?
+  deactivateddBy User?      @relation("fieldDelete", fields: [deactivaterId], references: [id])
+  activatorId    String?
+  activatedBy    User?      @relation("fieldRetrieve", fields: [activatorId], references: [id])
+  reason         String?
 }
 
 // model QuesComment {

@@ -26,6 +26,31 @@ export const isSuper = async (
   }
 };
 
+// Router level middleware to check if the user role is super admin or admin
+export const isAdmin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const requester: any = req.user;
+    const id = requester.id;
+
+    // Find the user
+    const user = await prisma.user.findUnique({ where: { id } });
+
+    // Check the role
+    if (user.role !== "SUPERADMIN" && user.role !== "ADMIN") {
+      return res.status(404).json();
+    }
+
+    // Allow access
+    next();
+  } catch (e) {
+    return res.status(400).json();
+  }
+};
+
 // TODO: write this in a better way for production
 // Router level middleware to check if the user is the owner, an admin or super admin
 export const isOwnerOrAdmin = async (

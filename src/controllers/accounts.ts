@@ -9,6 +9,7 @@ import { secrets, mail } from "../utils";
 class Controller {
   registration = async (req: Request, res: Response) => {
     try {
+      // TODO: remove extra consol logs
       console.log(req);
       // Validation
       const data = await validators.register(req);
@@ -129,19 +130,6 @@ class Controller {
       });
 
       return res.status(200).json(await validators.reshape(updated));
-    } catch (e) {
-      return res.status(400).json(e);
-    }
-  };
-
-  // TODO: make super admin a seed data and not a controller
-  super = async (req: Request, res: Response) => {
-    try {
-      const data = await validators.superAdmin(req);
-
-      const superadmin = await prisma.user.create({ data });
-
-      return res.status(200).json(superadmin);
     } catch (e) {
       return res.status(400).json(e);
     }

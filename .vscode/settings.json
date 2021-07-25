@@ -12,13 +12,22 @@
     "**/dist": true
   },
   "cSpell.words": [
+    "MIDLEVEL",
     "SUPERADMIN",
+    "Strategysafe",
     "ansvote",
     "answervote",
     "answervotes",
+    "checksafty",
+    "checkuser",
+    "deactivater",
+    "deleter",
+    "dont",
     "downvotes",
     "questionvote",
     "quesvote",
+    "samequestion",
+    "sameuser",
     "upvotes"
   ]
 }

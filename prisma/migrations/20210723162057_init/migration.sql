@@ -2,6 +2,9 @@
 CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN', 'SUPERADMIN');
 
 -- CreateEnum
+CREATE TYPE "Level" AS ENUM ('JUNIOR', 'INTERMEDIATE', 'MIDLEVEL', 'SENIOR');
+
+-- CreateEnum
 CREATE TYPE "VoteType" AS ENUM ('UPVOTE', 'DOWNVOTE');
 
 -- CreateTable
@@ -16,6 +19,11 @@ CREATE TABLE "User" (
     "score" INTEGER NOT NULL DEFAULT 0,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
     "role" "Role" NOT NULL DEFAULT E'USER',
+    "level" "Level" NOT NULL DEFAULT E'JUNIOR',
+    "yOfExperience" INTEGER NOT NULL DEFAULT 0,
+    "fieldId" TEXT,
+    "lat" DOUBLE PRECISION,
+    "lng" DOUBLE PRECISION,
 
     PRIMARY KEY ("id")
 );
@@ -23,9 +31,13 @@ CREATE TABLE "User" (
 -- CreateTable
 CREATE TABLE "Question" (
     "id" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
     "body" TEXT NOT NULL,
+    "tags" TEXT[],
     "votes" INTEGER NOT NULL DEFAULT 0,
+    "views" INTEGER NOT NULL DEFAULT 0,
     "userId" TEXT NOT NULL,
+    "fieldId" TEXT,
 
     PRIMARY KEY ("id")
 );
@@ -71,6 +83,17 @@ CREATE TABLE "ResetToken" (
     PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "Field" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "deactivaterId" TEXT,
+    "activatorId" TEXT,
+    "reason" TEXT,
+
+    PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User.username_unique" ON "User"("username");
 
@@ -86,8 +109,17 @@ CREATE UNIQUE INDEX "AnswerVote.userId_answerId_unique" ON "AnswerVote"("userId"
 -- CreateIndex
 CREATE UNIQUE INDEX "ResetToken.uniqueKey_unique" ON "ResetToken"("uniqueKey");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "Field.name_unique" ON "Field"("name");
+
+-- AddForeignKey
+ALTER TABLE "User" ADD FOREIGN KEY ("fieldId") REFERENCES "Field"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
 -- AddForeignKey
 ALTER TABLE "Question" ADD FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Question" ADD FOREIGN KEY ("fieldId") REFERENCES "Field"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Answer" ADD FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -109,3 +141,9 @@ ALTER TABLE "AnswerVote" ADD FOREIGN KEY ("answerId") REFERENCES "Answer"("id") 
 
 -- AddForeignKey
 ALTER TABLE "ResetToken" ADD FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Field" ADD FOREIGN KEY ("deactivaterId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Field" ADD FOREIGN KEY ("activatorId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;

@@ -15,6 +15,10 @@ const base = {
   firstName: Joi.string().allow(null),
   lastName: Joi.string().allow(null),
   image: Joi.string().allow(null),
+  yOfExperience: Joi.number(),
+  level: Joi.string().valid("JUNIOR", "INTERMEDIATE", "MIDLEVEL", "SENIOR"),
+  lat: Joi.number(),
+  lng: Joi.number(),
 };
 
 const imageField = (req: Request, data: User): User => {
@@ -42,6 +46,7 @@ export const register = async (req: Request): Promise<User> => {
     username: Joi.string().min(2).max(32).required(),
     email: Joi.string().min(2).required(),
     password: Joi.string().min(8).required(),
+    fieldId: Joi.string(),
   });
   const data = await schema.validateAsync(req.body);
 
@@ -79,6 +84,7 @@ export const updateAccount = async (req: Request): Promise<User> => {
     ...base,
     username: Joi.string(),
     email: Joi.string().email(),
+    fieldId: Joi.string(),
   });
   const data = await schema.validateAsync(req.body);
 
@@ -114,6 +120,7 @@ export const createUser = async (req: Request): Promise<User> => {
     ...base,
     username: Joi.string().min(2).max(32).required(),
     email: Joi.string().min(6).required(),
+    fieldId: Joi.string(),
     password: Joi.string().min(6).max(32).required(),
     score: Joi.number(),
     role: Joi.string().valid("USER", "ADMIN"),
@@ -135,36 +142,13 @@ export const updateUser = async (req: Request): Promise<User> => {
     ...base,
     username: Joi.string().min(2).max(32),
     email: Joi.string().min(6),
+    fieldId: Joi.string(),
     isActive: Joi.boolean(),
     score: Joi.number(),
     role: Joi.string().valid("USER", "ADMIN"),
   });
 
   const data = await schema.validateAsync(req.body);
-
-  // Set media fields
-  imageField(req, data);
-
-  return data;
-};
-
-export const superAdmin = async (req: Request): Promise<User> => {
-  const schema = Joi.object<User>({
-    ...base,
-    username: Joi.string().min(2).max(32).required(),
-    email: Joi.string().min(2).required(),
-    password: Joi.string().min(6).required(),
-    isActive: Joi.boolean(),
-    score: Joi.number(),
-  });
-
-  const data = await schema.validateAsync(req.body);
-
-  // Password hashing
-  data.password = await bcrypt.hash(data.password, 12);
-
-  // Set the role
-  data.role = "SUPERADMIN";
 
   // Set media fields
   imageField(req, data);
@@ -179,7 +163,11 @@ export const query = async (req: Request): Promise<UserQuery> => {
     id: Joi.string().allow(""),
     username: Joi.string().allow(""),
     email: Joi.string().allow(""),
+    fieldId: Joi.string().allow(""),
     role: Joi.string().valid("USER", "ADMIN"),
+    minYOE: Joi.number().allow(""),
+    maxYOE: Joi.number().allow(""),
+    level: Joi.string().valid("JUNIOR", "INTERMEDIATE", "MIDLEVEL", "SENIOR"),
     isActive: Joi.boolean(),
   });
 

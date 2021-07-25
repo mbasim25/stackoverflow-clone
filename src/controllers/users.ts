@@ -14,7 +14,11 @@ class Controller {
         id: query.id,
         username: query.username,
         email: query.email,
+        fieldId: query.fieldId,
         role: query.role,
+        yOfExperience: { gte: query.minYOE, lte: query.maxYOE },
+        level: query.level,
+        isActive: query.isActive,
       };
 
       // Get users list

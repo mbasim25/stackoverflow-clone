@@ -9,10 +9,11 @@
     "build": "tsc",
     "deploy": "git add . && git commit -m/sprint1 Heroku && git push heroku master",
     "test": "jest -i --forceExit",
-    "dev": "nodemon src/server.ts"
+    "dev": "nodemon src/server.ts",
+    "ts-node": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\""
   },
   "dependencies": {
-    "@prisma/client": "^2.23.0",
+    "@prisma/client": "^2.27.0",
     "aws-sdk": "^2.913.0",
     "bcrypt": "^5.0.1",
     "compression": "^1.7.4",
