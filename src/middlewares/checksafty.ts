@@ -2,7 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import Jwt from "jsonwebtoken";
 import { prisma } from "../server";
 
-// Router level middleware to check if reshape is required or not
+// A middleware thats based on the outcome the json get sent in a different way (reshaped)
+
 export const safe = async (req: Request, res: Response, next: NextFunction) => {
   try {
     let safe: boolean = false;
