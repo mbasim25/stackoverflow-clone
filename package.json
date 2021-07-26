@@ -10,7 +10,7 @@
     "deploy": "git add . && git commit -m/sprint1 Heroku && git push heroku master",
     "test": "jest -i --forceExit",
     "dev": "nodemon src/server.ts",
-    "postinstall": "npx prisma migrate reset",
+    "postinstall": "npx prisma migrate reset --force",
     "ts-node": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\""
   },
   "dependencies": {
