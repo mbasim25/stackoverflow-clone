@@ -93,6 +93,17 @@ class Controller {
       // Create
       const question = await prisma.question.create({
         data: { ...data, userId: user.id },
+        include: {
+          user: {
+            select: {
+              username: true,
+              firstName: true,
+              lastName: true,
+              image: true,
+              score: true,
+            },
+          },
+        },
       });
 
       return res.status(201).json(question);
@@ -111,6 +122,17 @@ class Controller {
       const question = await prisma.question.update({
         where: { id },
         data,
+        include: {
+          user: {
+            select: {
+              username: true,
+              firstName: true,
+              lastName: true,
+              image: true,
+              score: true,
+            },
+          },
+        },
       });
 
       return res.status(200).json(question);
