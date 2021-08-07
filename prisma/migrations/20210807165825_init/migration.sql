@@ -31,6 +31,7 @@ CREATE TABLE "User" (
 -- CreateTable
 CREATE TABLE "Question" (
     "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "title" TEXT NOT NULL,
     "body" TEXT NOT NULL,
     "tags" TEXT[],
@@ -45,6 +46,7 @@ CREATE TABLE "Question" (
 -- CreateTable
 CREATE TABLE "Answer" (
     "id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "body" TEXT NOT NULL,
     "votes" INTEGER NOT NULL DEFAULT 0,
     "userId" TEXT NOT NULL,
@@ -101,10 +103,10 @@ CREATE UNIQUE INDEX "User.username_unique" ON "User"("username");
 CREATE UNIQUE INDEX "User.email_unique" ON "User"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "QuestionVote.userId_questionId_unique" ON "QuestionVote"("userId", "questionId");
+CREATE UNIQUE INDEX "questionvote" ON "QuestionVote"("userId", "questionId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "AnswerVote.userId_answerId_unique" ON "AnswerVote"("userId", "answerId");
+CREATE UNIQUE INDEX "answervote" ON "AnswerVote"("userId", "answerId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ResetToken.uniqueKey_unique" ON "ResetToken"("uniqueKey");

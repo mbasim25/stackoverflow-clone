@@ -47,29 +47,31 @@ model User {
 }
 
 model Question {
-  id      String         @id @default(cuid())
-  title   String
-  body    String
-  tags    String[]
-  votes   Int            @default(0)
-  views   Int            @default(0)
-  userId  String
-  user    User           @relation(fields: [userId], references: [id])
-  answer  Answer[]
-  Likes   QuestionVote[]
-  fieldId String?
-  field   Field?         @relation(fields: [fieldId], references: [id])
+  id        String         @id @default(cuid())
+  createdAt DateTime       @default(now())
+  title     String
+  body      String
+  tags      String[]
+  votes     Int            @default(0)
+  views     Int            @default(0)
+  userId    String
+  user      User           @relation(fields: [userId], references: [id])
+  answer    Answer[]
+  votesList QuestionVote[]
+  fieldId   String?
+  field     Field?         @relation(fields: [fieldId], references: [id])
 }
 
 model Answer {
   id         String       @id @default(cuid())
+  createdAt  DateTime     @default(now())
   body       String
   votes      Int          @default(0)
   userId     String
   user       User         @relation(fields: [userId], references: [id])
   questionId String
   question   Question     @relation(fields: [questionId], references: [id])
-  AnswerLike AnswerVote[]
+  votesList  AnswerVote[]
 }
 
 model QuestionVote {
@@ -80,7 +82,7 @@ model QuestionVote {
   questionId String
   type       VoteType
 
-  @@unique([userId, questionId])
+  @@unique([userId, questionId], name: "questionvote")
 }
 
 model AnswerVote {
@@ -91,7 +93,7 @@ model AnswerVote {
   answerId String
   type     VoteType
 
-  @@unique([userId, answerId])
+  @@unique([userId, answerId], name: "answervote")
 }
 
 enum VoteType {
