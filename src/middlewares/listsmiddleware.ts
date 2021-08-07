@@ -4,9 +4,14 @@ import { prisma } from "../server";
 
 // A middleware thats based on the outcome the json get sent in a different way (reshaped)
 
-export const safe = async (req: Request, res: Response, next: NextFunction) => {
+export const listMiddleWare = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     let safe: boolean = false;
+    let user;
     const header = req.headers.authorization;
 
     if (header) {
@@ -14,15 +19,16 @@ export const safe = async (req: Request, res: Response, next: NextFunction) => {
       const token: any = Jwt.decode(header.replace("Bearer ", ""));
 
       // Find the user
-      const user = await prisma.user.findUnique({
+      const unique = await prisma.user.findUnique({
         where: { id: token.id },
       });
 
-      if (user && (user.role == "SUPERADMIN" || user.role == "ADMIN")) {
+      if (unique && (unique.role == "SUPERADMIN" || unique.role == "ADMIN")) {
         safe = true;
+        user = unique;
       }
     }
-
+    res.locals.user = user;
     res.locals.safe = safe;
     next();
   } catch (e) {
