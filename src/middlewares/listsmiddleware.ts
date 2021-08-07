@@ -23,9 +23,12 @@ export const listMiddleWare = async (
         where: { id: token.id },
       });
 
+      if (unique) {
+        user = unique;
+      }
+
       if (unique && (unique.role == "SUPERADMIN" || unique.role == "ADMIN")) {
         safe = true;
-        user = unique;
       }
     }
     res.locals.user = user;
