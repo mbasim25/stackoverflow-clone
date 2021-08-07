@@ -15,6 +15,7 @@ export interface QuestionFilter extends BasePagination {
   maxViews: number;
   title: string;
   body: string;
+  createdAt: "OLDEST";
 }
 
 export interface QuestionVote extends BaseVotes {}
