@@ -5,19 +5,42 @@ import * as validators from "../validators";
 import { Question } from "../types/";
 
 class Controller {
-  private votes = async (question: Question) => {
-    // Get upvotes count
+  private reshape = async (user: any, question: any) => {
+    // * Set votes count
+
+    // Upvotes count
     const upvotes = await prisma.questionVote.count({
       where: { type: "UPVOTE", questionId: question.id },
     });
 
-    // Get downvotes count
+    // Downvotes count
     const downvotes = await prisma.questionVote.count({
       where: { type: "DOWNVOTE", questionId: question.id },
     });
 
-    // set the count of original question
+    // Set the count of original question
     question.votes = upvotes - downvotes;
+
+    // * check if the user has voted
+
+    // Default value
+    question.hasVoted = null;
+
+    if (user) {
+      // Find the vote
+      const vote = await prisma.questionVote.findUnique({
+        where: {
+          questionvote: { userId: user.id, questionId: question.id },
+        },
+      });
+
+      // Checking and setting the value
+      if (vote) {
+        vote.type === "UPVOTE"
+          ? (question.hasVoted = "UPVOTE")
+          : (question.hasVoted = "DOWNVOTE");
+      }
+    }
 
     return question;
   };
@@ -25,6 +48,7 @@ class Controller {
   list = async (req: Request, res: Response) => {
     try {
       // Validation
+      const user = res.locals.user;
       const query = await validators.question.query(req);
 
       // Filters
@@ -50,11 +74,19 @@ class Controller {
         delete filters.tags;
       }
 
+      // Order By
+      const orderBy: any = [{ createdAt: "desc" }];
+
+      if (query.createdAt === "OLDEST") {
+        orderBy[0].createdAt = "asc";
+      }
+
       // Find questions
       const questions = await prisma.question.findMany({
         skip: query.skip,
         take: query.take,
         where: filters,
+        orderBy,
         include: {
           user: {
             select: {
@@ -66,12 +98,13 @@ class Controller {
             },
           },
           answer: true,
+          votesList: true,
         },
       });
 
       // Set votes count
       for (const question of questions) {
-        await this.votes(question);
+        await this.reshape(user, question);
       }
 
       return res.status(200).json({
