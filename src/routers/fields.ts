@@ -1,12 +1,11 @@
 import { Router } from "express";
 import passport from "passport";
 import controller from "../controllers/fields";
-import { isSuper, isAdmin } from "../middlewares/permissions";
-import { safe } from "../middlewares/checksafty";
+import { isSuper, isAdmin, listMiddleWare } from "../middlewares";
 
 const router = Router();
 // List
-router.get("/", safe, controller.list);
+router.get("/", listMiddleWare, controller.list);
 
 // JWT
 router.use(passport.authenticate("jwt", { session: false }));
