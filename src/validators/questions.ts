@@ -44,6 +44,7 @@ export const query = async (req: Request): Promise<QuestionFilter> => {
     body: Joi.string().allow(""),
     fieldId: Joi.string().allow(""),
     tags: Joi.array().items(Joi.string().allow("")),
+    createdAt: Joi.string().valid("OLDEST"),
   });
 
   // TODO: make this a middleware
