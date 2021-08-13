@@ -5,7 +5,7 @@ import { Answer } from "../types/";
 import * as validators from "../validators";
 
 class Controller {
-  private votes = async (answer: Answer) => {
+  private reshape = async (user: any, answer: any) => {
     // Get upvotes count
     const upvotes = await prisma.answerVote.count({
       where: { type: "UPVOTE", answerId: answer.id },
@@ -18,6 +18,27 @@ class Controller {
 
     // set the count of original question
     answer.votes = upvotes - downvotes;
+
+    // * check if the user has voted
+
+    // Default value
+    answer.hasVoted = null;
+
+    if (user) {
+      // Find the vote
+      const vote = await prisma.answerVote.findUnique({
+        where: {
+          answervote: { userId: user.id, answerId: answer.id },
+        },
+      });
+
+      // Checking and setting the value
+      if (vote) {
+        vote.type === "UPVOTE"
+          ? (answer.hasVoted = "UPVOTE")
+          : (answer.hasVoted = "DOWNVOTE");
+      }
+    }
 
     return answer;
   };
@@ -44,14 +65,27 @@ class Controller {
         skip: query.skip,
         take: query.take,
         where: filters,
+        orderBy: { createdAt: "desc" },
         include: {
-          user: { select: { username: true, image: true, score: true } },
+          user: {
+            select: {
+              username: true,
+              firstName: true,
+              lastName: true,
+              image: true,
+              score: true,
+            },
+          },
+          votesList: true,
         },
       });
 
+      // Get the user
+      const user = res.locals.user;
+
       // Set votes count
       for (const answer of answers) {
-        await this.votes(answer);
+        await this.reshape(user, answer);
       }
 
       return res.status(200).json({
@@ -92,7 +126,7 @@ class Controller {
         data,
       });
 
-      return res.status(200).json(await this.votes(answer));
+      return res.status(200).json(answer);
     } catch (e) {
       return res.status(400).json(e);
     }
