@@ -99,6 +99,7 @@ class Controller {
           },
           answer: true,
           votesList: true,
+          field: { select: { name: true } },
         },
       });
 
