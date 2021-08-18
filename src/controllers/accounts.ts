@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { prisma } from "../server";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import Joi from "joi";
 import * as validators from "../validators/users";
 import { User, PasswordChange, ResetEmail, ResetConfirm } from "../types";
 import { secrets, mail } from "../utils";
@@ -131,6 +132,25 @@ class Controller {
 
       return res.status(200).json(await validators.reshape(updated));
     } catch (e) {
+      return res.status(400).json(e);
+    }
+  };
+
+  retrieve = async (req: Request, res: Response) => {
+    try {
+      const id = await Joi.string().validateAsync(req.params.id);
+
+      const user = await prisma.user.findUnique({ where: { id } });
+
+      if (!user) {
+        return res.status(404).json();
+      }
+
+      await validators.reshape(user);
+
+      return res.status(200).json(user);
+    } catch (e) {
+      console.log(e);
       return res.status(400).json(e);
     }
   };
