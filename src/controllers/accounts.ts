@@ -140,7 +140,14 @@ class Controller {
     try {
       const id = await Joi.string().validateAsync(req.params.id);
 
-      const user = await prisma.user.findUnique({ where: { id } });
+      const user = await prisma.user.findUnique({
+        where: { id },
+        include: {
+          Question: true,
+          Answer: true,
+          field: true,
+        },
+      });
 
       if (!user) {
         return res.status(404).json();
